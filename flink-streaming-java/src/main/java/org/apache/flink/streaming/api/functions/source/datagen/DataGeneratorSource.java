@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
  * A data generator source that abstract data generator. It can be used to easy startup/test for
  * streaming job and performance testing. It is stateful, re-scalable, possibly in parallel.
  *
- * 抽象数据生成器的数据生成器源。它可以用来轻松启动测试流作业和性能测试。它是有状态的，可伸缩的，可能是并行的。
+ * <p>抽象数据生成器的数据生成器源。它可以用来轻松启动测试流作业和性能测试。它是有状态的，可伸缩的，可能是并行的。
  */
 @Experimental
 public class DataGeneratorSource<T> extends RichParallelSourceFunction<T>
