@@ -123,6 +123,7 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
 /** MiniCluster to execute Flink jobs locally. */
+/** MiniCluster本地执行Flink作业 */
 public class MiniCluster implements AutoCloseableAsync {
 
     private static final Logger LOG = LoggerFactory.getLogger(MiniCluster.class);

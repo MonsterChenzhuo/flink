@@ -28,6 +28,8 @@ import java.util.List;
  * The {@code Committer} is responsible for committing the data staged by the sink.
  *
  * @param <CommT> The type of information needed to commit the staged data
+ * Committer负责提交由接收器暂存的数据。
+ * 类型参数:  -提交分段数据所需的信息类型
  */
 @Experimental
 public interface Committer<CommT> extends AutoCloseable {

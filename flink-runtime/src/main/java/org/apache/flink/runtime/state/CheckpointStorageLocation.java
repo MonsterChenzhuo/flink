@@ -42,6 +42,8 @@ public interface CheckpointStorageLocation extends CheckpointStreamFactory {
      * Disposes the checkpoint location in case the checkpoint has failed. This method disposes all
      * the data at that location, not just the data written by the particular node or process that
      * calls this method.
+     * 当检查点失败时，处理检查点位置。此方法将在该位置处理所有数据，而不仅仅是调用此方法的特定节点或进程写入的数据。
+     *
      */
     void disposeOnFailure() throws IOException;
 
@@ -52,6 +54,9 @@ public interface CheckpointStorageLocation extends CheckpointStreamFactory {
      *
      * <p>If there is no custom location information that needs to be communicated, this method can
      * simply return {@link CheckpointStorageLocationReference#getDefault()}.
+     *
+     * 获取对存储位置的引用。此引用通过检查点RPC消息和检查点屏障发送到目标存储位置，其格式避免了特定于后端的类。
+     * 如果没有需要通信的自定义位置信息，这个方法可以简单地返回CheckpointStorageLocationReference.getDefault()。
      */
     CheckpointStorageLocationReference getLocationReference();
 }

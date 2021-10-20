@@ -37,6 +37,7 @@ public class FileWriterBucketState {
     private final String bucketId;
 
     /** The directory where all the part files of the bucket are stored. */
+    /** 桶中所有部件文件的存放目录 */
     private final Path bucketPath;
 
     /**

@@ -58,7 +58,7 @@ public class DataGeneratorSource<T> extends RichParallelSourceFunction<T>
 
     /**
      * Creates a source that emits records by {@link DataGenerator} without controlling emit rate.
-     *
+     * 创建一个通过{@link datgenerator}发出记录而不控制发出速率的源。
      * @param generator data generator.
      */
     public DataGeneratorSource(DataGenerator<T> generator) {

@@ -91,6 +91,7 @@ public class FileWriter<IN>
 
     /**
      * A constructor creating a new empty bucket manager.
+     * 创建一个新的空桶管理器的构造函数
      *
      * @param basePath The base path for our buckets.
      * @param metricGroup {@link SinkWriterMetricGroup} to set sink writer specific metrics.
@@ -147,6 +148,12 @@ public class FileWriter<IN>
      * @param bucketStates the state holding recovered state about active buckets.
      * @throws IOException if anything goes wrong during retrieving the state or
      *     restoring/committing of any in-progress/pending part files
+     *
+     * 从失败中恢复后初始化状态。 在此过程中: 我们将零件计数器的初始值设置为之前跨所有任务和桶使用的最大值。
+     * 这保证了我们不会覆盖有效的数据， 我们为以前的检查点(在我们恢复的最后一个成功检查点之前)提交所有挂起的文件，
+     * 我们继续写入每个桶的前一个正在进行中的文件，并且 如果我们接收到同一个bucket的多个状态，我们将它们合并。
+     * 参数: bucketStates—保持活跃桶恢复状态的状态。
+     * 抛出: IOException -如果在检索状态或恢复/提交任何正在进行的/挂起的部分文件时发生任何错误
      */
     public void initializeState(List<FileWriterBucketState> bucketStates) throws IOException {
         checkNotNull(bucketStates, "The retrieved state was null.");

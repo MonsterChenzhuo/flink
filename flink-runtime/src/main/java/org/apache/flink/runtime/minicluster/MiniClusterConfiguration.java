@@ -35,6 +35,7 @@ import java.time.Duration;
 import static org.apache.flink.runtime.minicluster.RpcServiceSharing.SHARED;
 
 /** Configuration object for the {@link MiniCluster}. */
+/** {@link MiniCluster}的配置对象 */
 public class MiniClusterConfiguration {
 
     static final int DEFAULT_IO_POOL_SIZE = 4;

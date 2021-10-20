@@ -37,6 +37,9 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  * state, created by the {@link org.apache.flink.connector.file.sink.writer.FileWriter FileWriter}
  * and commit them, or put them in "finished" state and ready to be consumed by downstream
  * applications or systems.
+ *
+ * FileSink的提交器实现。 该提交器负责接收由FileWriter创建的分段部分文件(即处于“pending”状态的部分文件)并提交它们，
+ * 或者将它们置于“finished”状态并准备供下游应用程序或系统使用
  */
 @Internal
 public class FileCommitter implements Committer<FileSinkCommittable> {
