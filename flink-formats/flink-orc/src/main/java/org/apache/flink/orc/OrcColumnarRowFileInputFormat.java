@@ -54,6 +54,10 @@ import static org.apache.flink.orc.vector.AbstractOrcColumnVector.createFlinkVec
  * <p>This class can add extra fields through {@link ColumnBatchFactory}, for example, add partition
  * fields, which can be extracted from path. Therefore, the {@link #getProducedType()} may be
  * different and types of extra fields need to be added.
+ *
+ * 一个ORC读取器，它产生一系列的colum窄数据记录。
+ * 这个类可以通过ColumnBatchFactory添加额外的字段，例如，添加可以从路径提取的分区字段。
+ * 因此，getProducedType()可能是不同的，需要添加额外字段的类型。
  */
 public class OrcColumnarRowFileInputFormat<BatchT, SplitT extends FileSourceSplit>
         extends AbstractOrcFileInputFormat<RowData, BatchT, SplitT> {

@@ -45,9 +45,14 @@ import static org.apache.flink.util.Preconditions.checkArgument;
  * selection and serializing records into bytes.
  *
  * @param <T> the type of the record that can be emitted with this record writer
+ *
+ * 一个抽象的面向记录的运行时结果编写器。
+ * RecordWriter包装运行时的ResultPartitionWriter，并负责通道选择和将记录序列化为字节。
+ * 类型参数:  -可以用此记录写入器发出的记录的类型
  */
 public abstract class RecordWriter<T extends IOReadableWritable> implements AvailabilityProvider {
 
+    /** 如果没有给出带有任务引用的名称，则输出刷新线程的默认名称 */
     /** Default name for the output flush thread, if no name with a task reference is given. */
     @VisibleForTesting
     public static final String DEFAULT_OUTPUT_FLUSH_THREAD_NAME = "OutputFlusher";
@@ -148,7 +153,7 @@ public abstract class RecordWriter<T extends IOReadableWritable> implements Avai
     public CompletableFuture<?> getAvailableFuture() {
         return targetPartition.getAvailableFuture();
     }
-
+    /** 这是用来发送常规记录的 */
     /** This is used to send regular records. */
     public abstract void emit(T record) throws IOException;
 

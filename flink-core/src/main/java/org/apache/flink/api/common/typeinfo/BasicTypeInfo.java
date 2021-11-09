@@ -67,6 +67,8 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 /**
  * Type information for primitive types (int, long, double, byte, ...), String, Date, Void,
  * BigInteger, and BigDecimal.
+ * 基本类型(int, long, double, byte，…)，String, Date, Void, BigInteger，和BigDecimal的类型信息。
+ * 类型参数:  -此类型信息表示的类型。
  */
 @Public
 public class BasicTypeInfo<T> extends TypeInformation<T> implements AtomicType<T> {

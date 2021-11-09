@@ -125,6 +125,8 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  * <ul>
  *   <li>{@link #updateTaskExecutionState} updates the task execution state for given task
  * </ul>
+ * JobMaster的实现。作业主程序负责执行单个JobGraph。
+ * 它提供了以下方法作为远程与JobMaster交互的rpc接口的一部分: updateTaskExecutionState更新给定任务的任务执行状态
  */
 public class JobMaster extends PermanentlyFencedRpcEndpoint<JobMasterId>
         implements JobMasterGateway, JobMasterService {

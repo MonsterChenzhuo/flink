@@ -43,6 +43,11 @@ import static org.apache.flink.util.Preconditions.checkArgument;
  * DataStream} with one predefined output type.
  *
  * @param <T> The type of the elements in this stream.
+ * SingleOutputStreamOperator表示一个用户定义的转换，该转换应用于一个带有预定义输出类型的DataStream。
+ * 类型参数:  -此流中元素的类型。
+ *
+ * DataStream数据集子类实现
+ * 解决的是:文件数据输入
  */
 @Public
 public class SingleOutputStreamOperator<T> extends DataStream<T> {
@@ -54,6 +59,8 @@ public class SingleOutputStreamOperator<T> extends DataStream<T> {
      * We keep track of the side outputs that were already requested and their types. With this, we
      * can catch the case when a side output with a matching id is requested for a different type
      * because this would lead to problems at runtime.
+     * 我们跟踪已经请求的端输出及其类型。通过这种方法，
+     * 我们可以捕捉到当一个id匹配的端输出被请求为不同类型时的情况，因为这将在运行时导致问题。
      */
     private Map<OutputTag<?>, TypeInformation<?>> requestedSideOutputs = new HashMap<>();
 
@@ -94,6 +101,11 @@ public class SingleOutputStreamOperator<T> extends DataStream<T> {
      *
      * @param uid The unique user-specified ID of this transformation.
      * @return The operator with the specified ID.
+     *
+     * 设置此操作符的ID。 指定的ID用于在作业提交过程中分配相同的操作符ID(例如从保存点开始作业时)。
+     * 重要提示:这个ID需要在每个转换和作业中是唯一的。否则，作业提交将失败。
+     * 参数: uid—用户指定的此转换的唯一ID。
+     * 返回值: 具有指定ID的操作符。
      */
     @PublicEvolving
     public SingleOutputStreamOperator<T> uid(String uid) {
@@ -131,7 +143,7 @@ public class SingleOutputStreamOperator<T> extends DataStream<T> {
 
     /**
      * Sets the parallelism for this operator.
-     *
+     *  设置此操作符的并行度。
      * @param parallelism The parallelism for this operator.
      * @return The operator with set parallelism.
      */
@@ -395,7 +407,7 @@ public class SingleOutputStreamOperator<T> extends DataStream<T> {
     /**
      * Gets the {@link DataStream} that contains the elements that are emitted from an operation
      * into the side output with the given {@link OutputTag}.
-     *
+     *  获取DataStream，该DataStream包含使用给定的OutputTag从操作发送到端输出的元素。
      * @see org.apache.flink.streaming.api.functions.ProcessFunction.Context#output(OutputTag,
      *     Object)
      */

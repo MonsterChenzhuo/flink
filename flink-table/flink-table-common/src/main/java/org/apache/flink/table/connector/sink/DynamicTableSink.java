@@ -72,6 +72,19 @@ import java.io.Serializable;
  *
  * <p>In the last step, the planner will call {@link #getSinkRuntimeProvider(Context)} for obtaining
  * a provider of runtime implementation.
+ *
+ * 将动态表汇聚到外部存储系统。
+ * 动态表是Flink的Table & SQL API的核心概念，用于统一处理有界和无界数据。
+ * 根据定义，动态表可以随时间变化。
+ * 当写一个动态表时，内容总是可以被认为是一个更新日志(有限或无限)，所有的更改都被连续地写出来，直到更新日志耗尽。
+ * 给定的ChangelogMode指示接收器在运行时接受的更改集。
+ * 对于常规批处理场景，接收器只能接受仅插入的行，并写出有边界的流。
+ * 对于常规的流场景，接收器只能接受只插入的行，并可以写出不受限制的流。
+ * 对于更改数据捕获(CDC)场景，接收器可以使用插入、更新和删除行写出有界或无界流。也看到RowKind。
+ * DynamicTableSink的实例可以被视为最终生成具体运行时实现的工厂，用于写入实际数据。
+ * 根据可选声明的能力，规划器可能会对实例应用更改，从而改变生成的运行时实现。
+ * DynamicTableSink可以实现以下能力: SupportsPartitioning SupportsOverwrite SupportsWritingMetadata 在最后一步中，
+ * 规划器将调用getSinkRuntimeProvider(DynamicTableSink.Context)来获取运行时实现的提供者。
  */
 @PublicEvolving
 public interface DynamicTableSink {

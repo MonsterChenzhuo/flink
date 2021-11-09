@@ -27,6 +27,9 @@ import java.io.Serializable;
  * Interface for implementing user defined sink functionality.
  *
  * @param <IN> Input type parameter.
+ *
+ * 实现用户定义的接收器功能的接口。
+ * 类型参数:  -输入类型参数。
  */
 @Public
 public interface SinkFunction<IN> extends Function, Serializable {

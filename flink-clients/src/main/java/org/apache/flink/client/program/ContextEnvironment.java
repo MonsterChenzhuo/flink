@@ -40,6 +40,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
+/**
+ * 构建执行环境
+ *  通过 -StreamExecutionEnvironment
+ *      -ExecutionEnvironment
+ * 他之所以会有一个Context 是说他是具有一个上下文的执行环境
+ * 也就是Client所构建出的ContextEnvironment是可以用于多个作业的提交的
+ * 也就是说ContextEnvironment它可以去构建不同作业的ExecutionEnvironment
+ */
 
 /** Execution Environment for remote execution with the Client. */
 public class ContextEnvironment extends ExecutionEnvironment {

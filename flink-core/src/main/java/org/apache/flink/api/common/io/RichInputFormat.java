@@ -28,6 +28,8 @@ import java.io.IOException;
 /**
  * An abstract stub implementation for Rich input formats. Rich formats have access to their runtime
  * execution context via {@link #getRuntimeContext()}.
+ * Rich输入格式的抽象存根实现。富格式可以通过getRuntimeContext()访问它们的运行时执行上下文。
+ * 类型参数:  -产生的记录的类型。  -输入分割的类型。
  */
 @Public
 public abstract class RichInputFormat<OT, T extends InputSplit> implements InputFormat<OT, T> {
@@ -60,6 +62,8 @@ public abstract class RichInputFormat<OT, T extends InputSplit> implements Input
      *
      * @see InputFormat
      * @throws IOException in case allocating the resources failed.
+     * 打开这个InputFormat实例。每个并行实例调用此方法一次。资源应该以这种方式分配。(例如数据库连接、缓存等)
+     * 抛出: IOException -在资源分配失败的情况下。
      */
     @PublicEvolving
     public void openInputFormat() throws IOException {

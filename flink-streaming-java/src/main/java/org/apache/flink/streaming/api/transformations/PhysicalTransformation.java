@@ -29,6 +29,8 @@ import org.apache.flink.streaming.api.operators.ChainingStrategy;
  *
  * @param <T> The type of the elements that result from this {@code Transformation}
  * @see Transformation
+ * 创建物理操作的转换。它能够设置ChainingStrategy。请参阅: 转换
+ * 类型参数:  -由此转换产生的元素的类型
  */
 @Internal
 public abstract class PhysicalTransformation<T> extends Transformation<T> {
@@ -40,6 +42,10 @@ public abstract class PhysicalTransformation<T> extends Transformation<T> {
      *     the Log
      * @param outputType The output type of this {@code Transformation}
      * @param parallelism The parallelism of this {@code Transformation}
+     * 使用给定的名称、输出类型和并行性创建一个新的Transformation。
+     * 参数: name -转换的名称，这将在可视化和日志中显示
+     *      outputType -此转换的输出类型 这个变换的并行性
+     *
      */
     PhysicalTransformation(String name, TypeInformation<T> outputType, int parallelism) {
         super(name, outputType, parallelism);

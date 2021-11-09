@@ -29,7 +29,7 @@ import java.io.IOException;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-
+/** FileSourceSplitSerializer的单元测试。 */
 /** Unit tests for the {@link FileSourceSplitSerializer}. */
 public class FileSourceSplitSerializerTest {
 

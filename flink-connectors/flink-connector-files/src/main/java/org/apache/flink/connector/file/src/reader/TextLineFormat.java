@@ -40,6 +40,10 @@ import java.io.InputStreamReader;
  * and discard the number of lined that were processed before the last checkpoint. That is due to
  * the fact that the offsets of lines in the file cannot be tracked through the charset decoders
  * with their internal buffering of stream input and charset decoder state.
+ *
+ * 从文件中输入文本行的阅读器格式。 阅读器使用Java内置的InputStreamReader使用各种支持的字符集编码来解码字节流。
+ * 这种格式不支持从检查点进行优化恢复。在恢复时，它将重新读取并丢弃在最后一个检查点之前处理的行数。
+ * 这是由于文件中的行偏移量无法通过charset解码器及其流输入的内部缓冲和charset解码器状态来跟踪。
  */
 @PublicEvolving
 public class TextLineFormat extends SimpleStreamFormat<String> {

@@ -25,6 +25,15 @@ import javax.annotation.Nullable;
 
 import java.util.Optional;
 
+/**
+ * 根据我们不同的环境,比如说yarn的或者k8s的他都会去加载不同的CluserClientFactory
+ * 加载进来之后,我们用户在进行提交作业的时候,比如说向yarn去提交,去执行的时候,他就会
+ * 有相应的参数去做一个匹配,匹配完成之后,加载进来的CluserClientFactory
+ *
+ *
+ *
+ */
+
 /** A factory containing all the necessary information for creating clients to Flink clusters. */
 @Internal
 public interface ClusterClientFactory<ClusterID> {

@@ -33,6 +33,8 @@ import org.apache.flink.streaming.api.transformations.SourceTransformation;
  * The DataStreamSource represents the starting point of a DataStream.
  *
  * @param <T> Type of the elements in the DataStream created from the this source.
+ * DataStreamSource表示DataStream的起点。
+ * 类型参数:  -从此源创建的DataStream中的元素类型。
  */
 @Public
 public class DataStreamSource<T> extends SingleOutputStreamOperator<T> {
@@ -80,9 +82,11 @@ public class DataStreamSource<T> extends SingleOutputStreamOperator<T> {
     /**
      * Constructor for "deep" sources that manually set up (one or more) custom configured complex
      * operators.
+     * 用于手动设置(一个或多个)自定义配置复杂操作符的“深层”源的构造函数。
      */
     public DataStreamSource(SingleOutputStreamOperator<T> operator) {
-        super(operator.environment, operator.getTransformation());
+        // 第二个参数其实就是一个前面依赖[他是通过获取算子列表]
+        super(operator.environment, operator.getTransformation());   //嵌套
         this.isParallel = true;
     }
 

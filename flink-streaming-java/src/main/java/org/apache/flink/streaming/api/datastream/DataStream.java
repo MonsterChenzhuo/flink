@@ -123,9 +123,13 @@ import java.util.UUID;
  * </ul>
  *
  * @param <T> The type of the elements in this stream.
+ * DataStream表示相同类型的元素流。
+ * 一个DataStream可以通过应用转换转换到另一个DataStream，
+ * 例如: map filter
+ * 类型参数:  -此流中元素的类型。
  */
 @Public
-public class DataStream<T> {
+public class DataStream<T> {   // 这个就类比spark的RDD   flink中叫DataStream spark中叫RDD
 
     protected final StreamExecutionEnvironment environment;
 
@@ -136,6 +140,17 @@ public class DataStream<T> {
      * forward by default.
      *
      * @param environment The StreamExecutionEnvironment
+     * 编程模型-->面向数据集的操作
+     *  DataStream表示相同类型的元素流
+     *  1.一个DataStream里面会有一系列的 分区或者叫做切片[并行度]
+     *  2.一个DataStream会有多个分区,但是我们面对这个DataStream只会专递一个方法,
+     *  比如DataStreamSource调他的flatMap方法时我传递一个函数,但是这个函数会坐拥在这个DataStream的没一个分区上的每一条记录上
+     *  3.一个DataStream可能是依赖多个DataStream所得到的
+     *  4.一个分区器作用在key-value的DataStream上[分区器是通过key做分区计算,key做hash取模 模你的下游分区数,来去看你的数据去到下游的那个分区里]
+     *  5.数据本地化计算
+     *
+     * 在给定的执行环境中创建一个新的DataStream，分区默认设置为[数据多少个数据块/数据切片 就会有对应数量的分区]
+     * 参数: environment—StreamExecutionEnvironment
      */
     public DataStream(StreamExecutionEnvironment environment, Transformation<T> transformation) {
         this.environment =
@@ -159,6 +174,8 @@ public class DataStream<T> {
      * Gets the parallelism for this operator.
      *
      * @return The parallelism set for this operator.
+     * 获取此操作符的并行度。
+     * 返回值: 此运算符的并行度集。
      */
     public int getParallelism() {
         return transformation.getParallelism();
@@ -394,6 +411,13 @@ public class DataStream<T> {
      * @param keySelector The KeySelector with which the DataStream is partitioned.
      * @return The partitioned DataStream.
      * @see KeySelector
+     * 使用自定义分区程序对选择器返回的键对DataStream进行分区。
+     * 此方法接受键选择器以获取要进行分区的键，以及接受键类型的分区器。
+     * 注意:此方法仅适用于单个字段键，即选择器不能返回字段的元组。
+     * 参数: partitioner—将分区分配给键的分区程序。
+     * keySelector—用于对DataStream进行分区的keySelector。
+     * 返回值: 分区的数据流。
+     * 请参阅: KeySelector
      */
     public <K> DataStream<T> partitionCustom(
             Partitioner<K> partitioner, KeySelector<T, K> keySelector) {
@@ -569,6 +593,12 @@ public class DataStream<T> {
      * @param mapper The MapFunction that is called for each element of the DataStream.
      * @param <R> output type
      * @return The transformed {@link DataStream}.
+     * 在DataStream上应用Map转换。转换为DataStream的每个元素调用MapFunction。
+     * 每个MapFunction调用都返回一个元素。
+     * 用户还可以扩展RichMapFunction来访问org.apache.flink.api.common.functions.RichFunction接口提供的其他特性。
+     * 参数: mapper—为DataStream的每个元素调用的MapFunction。
+     * 类型参数:  -输出类型
+     * 返回值: 转换后的数据流。
      */
     public <R> SingleOutputStreamOperator<R> map(MapFunction<T, R> mapper) {
 
@@ -589,6 +619,12 @@ public class DataStream<T> {
      * @param outputType {@link TypeInformation} for the result type of the function.
      * @param <R> output type
      * @return The transformed {@link DataStream}.
+     * 在DataStream上应用Map转换。转换为DataStream的每个元素调用MapFunction。
+     * 每个MapFunction调用都返回一个元素。
+     * 用户还可以扩展RichMapFunction来访问org.apache.flink.api.common.functions.RichFunction接口提供的其他特性。
+     * 参数: mapper—为DataStream的每个元素调用的MapFunction。
+     * outputType -函数的结果类型的类型信息。
+     * 类型参数:  -输出类型 返回值: 转换后的数据流。
      */
     public <R> SingleOutputStreamOperator<R> map(
             MapFunction<T, R> mapper, TypeInformation<R> outputType) {
@@ -1192,6 +1228,7 @@ public class DataStream<T> {
             StreamOperatorFactory<R> operatorFactory) {
 
         // read the output type of the input Transform to coax out errors about MissingTypeInfo
+        // 读取输入Transform的输出类型以引出关于MissingTypeInfo的错误
         transformation.getOutputType();
 
         OneInputTransformation<T, R> resultTransform =
@@ -1229,10 +1266,15 @@ public class DataStream<T> {
      *
      * @param sinkFunction The object containing the sink's invoke function.
      * @return The closed DataStream.
+     * 将给定的接收器添加到此DataStream。一旦调用了StreamExecutionEnvironment.execute()方法，只有添加了接收器的流才会被执行。
+     * 参数: sinkFunction——包含接收器调用函数的对象。
+     * 返回值: 关闭数据流。
+     *
      */
     public DataStreamSink<T> addSink(SinkFunction<T> sinkFunction) {
 
         // read the output type of the input Transform to coax out errors about MissingTypeInfo
+        //读取输入Transform的输出类型以引出关于MissingTypeInfo的错误
         transformation.getOutputType();
 
         // configure the type if needed
@@ -1254,6 +1296,9 @@ public class DataStream<T> {
      *
      * @param sink The user defined sink.
      * @return The closed DataStream.
+     * 将给定的Sink添加到此DataStream。一旦调用了StreamExecutionEnvironment.execute()方法，只有添加了接收器的流才会被执行。
+     * 参数: sink—用户定义的sink。 返回值: 关闭数据流。
+     *
      */
     @Experimental
     public DataStreamSink<T> sinkTo(Sink<T, ?, ?, ?> sink) {
@@ -1356,6 +1401,8 @@ public class DataStream<T> {
      * {@link DataStream}.
      *
      * @return The Transformation
+     * 返回表示逻辑上创建此DataStream的操作的Transformation。
+     * 就是他的算子间依赖关系
      */
     @Internal
     public Transformation<T> getTransformation() {

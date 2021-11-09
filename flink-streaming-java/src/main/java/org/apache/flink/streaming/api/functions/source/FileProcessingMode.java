@@ -23,13 +23,17 @@ import org.apache.flink.annotation.PublicEvolving;
 /**
  * The mode in which the {@link ContinuousFileMonitoringFunction} operates. This can be either
  * {@link #PROCESS_ONCE} or {@link #PROCESS_CONTINUOUSLY}.
+ * ContinuousFileMonitoringFunction运行的模式。
+ * 这可以是PROCESS_ONCE或PROCESS_CONTINUOUSLY。
  */
 @PublicEvolving
 public enum FileProcessingMode {
 
     /** Processes the current contents of the path and exits. */
+    /** 处理路径的当前内容并退出。*/
     PROCESS_ONCE,
 
     /** Periodically scans the path for new data. */
+    /** 定期扫描路径是否有新数据。*/
     PROCESS_CONTINUOUSLY
 }

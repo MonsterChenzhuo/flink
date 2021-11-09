@@ -24,6 +24,21 @@ import org.apache.flink.configuration.Configuration;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Pipline执行器
+ * 他是对于我们通过DataStream作业写出来的一些流式的作业
+ * 通过DataStream API转换形成Transformation
+ * 他这个Transformation转换出来的就是StreamGraph[流作业中]/Plan[批作业中]
+ *      LocalExecutor 对应MinCluster本地执行
+ *      AbstractJobClusterExecutor  对应YarnJobClusterExecutor [per-job]
+ *      AbastractSessionClusterExecutor 对应YarnSessionClusterExector [session]
+ *                                          KubernetsSessionClusterExector [k8s]
+ *                                          RemoteExecutor [standlone]
+ *
+ *
+ *
+ */
+
 /** The entity responsible for executing a {@link Pipeline}, i.e. a user job. */
 @Internal
 public interface PipelineExecutor {

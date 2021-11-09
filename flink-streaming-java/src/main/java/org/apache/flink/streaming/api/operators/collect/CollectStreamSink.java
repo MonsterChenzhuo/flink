@@ -26,6 +26,8 @@ import org.apache.flink.streaming.api.transformations.LegacySinkTransformation;
 /**
  * A {@link DataStreamSink} which is used to collect results of a data stream. It completely
  * overwrites {@link DataStreamSink} so that its own transformation is manipulated.
+ * {@link DataStreamSink}用于收集数据流的结果。它完全
+ * *覆盖{@link DataStreamSink}，以便操作它自己的转换。
  */
 @Internal
 public class CollectStreamSink<T> extends DataStreamSink<T> {

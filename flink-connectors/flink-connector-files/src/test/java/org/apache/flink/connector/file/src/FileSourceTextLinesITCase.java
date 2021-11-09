@@ -62,7 +62,7 @@ import java.util.zip.GZIPOutputStream;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-
+/** 基于mincluster的FileSource集成测试 */
 /** MiniCluster-based integration test for the {@link FileSource}. */
 public class FileSourceTextLinesITCase extends TestLogger {
 

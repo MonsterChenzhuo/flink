@@ -28,6 +28,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 /** Input Format that reads text files. Each line results in another element. */
+/** 输入读取文本文件的格式。每一行都是另一个元素。*/
 @PublicEvolving
 public class TextInputFormat extends DelimitedInputFormat<String> {
 

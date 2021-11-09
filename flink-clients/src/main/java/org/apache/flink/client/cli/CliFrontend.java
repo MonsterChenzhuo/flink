@@ -1108,19 +1108,24 @@ public class CliFrontend {
             return handleError(e);
         }
     }
-
+    /**
+     * 启动JVM 做程序提交的一些准备工作 然后执行提交我们的应用程序
+     */
     /** Submits the job based on the arguments. */
     public static void main(final String[] args) {
         EnvironmentInformation.logEnvironmentInfo(LOG, "Command Line Client", args);
 
         // 1. find the configuration directory
+        // 1.找到配置目录
         final String configurationDirectory = getConfigurationDirectoryFromEnv();
 
         // 2. load the global configuration
+        // 2.加载全局配置
         final Configuration configuration =
                 GlobalConfiguration.loadConfiguration(configurationDirectory);
 
         // 3. load the custom command lines
+        // 3.加载自定义命令行
         final List<CustomCommandLine> customCommandLines =
                 loadCustomCommandLines(configuration, configurationDirectory);
 

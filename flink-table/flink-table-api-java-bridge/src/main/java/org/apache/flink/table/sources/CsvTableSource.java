@@ -57,6 +57,9 @@ import static org.apache.flink.table.types.utils.TypeConversions.fromDataTypeToL
  *
  * @deprecated The legacy CSV connector has been replaced by {@link FileSource}. It is kept only to
  *     support tests for the legacy connector stack.
+ *
+ *     StreamTableSource用于具有(逻辑上)无限字段的简单CSV文件。
+ *     过时的 遗留的CSV连接器已被FileSource取代。保留它只是为了支持遗留连接器堆栈的测试。
  */
 @Internal
 @Deprecated

@@ -36,6 +36,10 @@ import java.util.concurrent.Executor;
  * The rpc is then only executed if the attached fencing token equals the endpoint's own token.
  *
  * @param <F> type of the fencing token
+ *
+ * fenced RpcEndpoint的基类。被隔离的rpc端点期望所有rpc消息都被围栏令牌充实。
+ * 而且，rpc端点分配了自己的fencing令牌。只有当附加的fencing令牌等于端点自己的令牌时，rpc才会执行。
+ * 类型参数:  -剑击令牌的类型
  */
 public abstract class FencedRpcEndpoint<F extends Serializable> extends RpcEndpoint {
 

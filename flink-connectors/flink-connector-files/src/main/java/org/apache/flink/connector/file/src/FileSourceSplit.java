@@ -103,6 +103,7 @@ public class FileSourceSplit implements SourceSplit, Serializable {
      * @param offset The start (inclusive) of the split's rage in the file.
      * @param length The number of bytes in the split (starting from the offset)
      * @param hostnames The hostnames of the nodes storing the split's file range.
+     * 构造与主机信息的分割。@param filePath文件路径。@param offset文件中split的起始帧(包括)。@param length分割文件的字节数(从偏移量开始)@param hostname存储分割文件范围的节点的主机名。
      */
     public FileSourceSplit(
             String id, Path filePath, long offset, long length, String... hostnames) {

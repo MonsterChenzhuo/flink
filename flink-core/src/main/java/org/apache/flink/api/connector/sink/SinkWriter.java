@@ -35,6 +35,12 @@ import java.util.List;
  * @param <InputT> The type of the sink writer's input
  * @param <CommT> The type of information needed to commit data staged by the sink
  * @param <WriterStateT> The type of the writer's state
+ *
+ * SinkWriter负责写入数据和处理任何潜在的tmp区域，用于写入尚未分阶段[staged]的数据，例如，在进行中的文件。
+ * 准备提交的数据(或指向实际数据暂存位置的元数据)由prepareCommit(boolean)返回给系统。
+ * 类型参数:  < InputT>      -接收器写入器的输入类型
+ *          <CommT>        -提交由接收器暂存的数据所需的信息类型
+ *          <WriterStateT> -写入器状态的类型
  */
 @Experimental
 public interface SinkWriter<InputT, CommT, WriterStateT> extends AutoCloseable {
@@ -45,6 +51,10 @@ public interface SinkWriter<InputT, CommT, WriterStateT> extends AutoCloseable {
      * @param element The input record
      * @param context The additional information about the input record
      * @throws IOException if fail to add an element.
+     *
+     * 向写入器添加一个元素。
+     * 参数: element—输入记录
+     *      context—关于输入记录的附加信息
      */
     void write(InputT element, Context context) throws IOException, InterruptedException;
 
@@ -69,6 +79,12 @@ public interface SinkWriter<InputT, CommT, WriterStateT> extends AutoCloseable {
      * @param flush Whether flushing the un-staged data or not
      * @return The data is ready to commit.
      * @throws IOException if fail to prepare for a commit.
+     *
+     * 准备提交。
+     * 这将在我们在流执行模式下检查写入器状态之前被调用。
+     * 如果接收没有显式提交者，仍然调用此方法以允许写入器实现一阶段提交协议。
+     * 参数: 刷新-是否刷新非分级数据
+     * 返回值: 数据已经准备好提交了。
      */
     List<CommT> prepareCommit(boolean flush) throws IOException, InterruptedException;
 

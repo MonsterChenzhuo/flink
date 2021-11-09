@@ -28,6 +28,7 @@ import java.util.ServiceLoader;
 /**
  * This interface serves as a factory interface for RPC services, with some additional utilities
  * that are reliant on implementation details of the RPC service.
+ * 这个接口作为RPC服务的工厂接口，以及一些依赖于RPC服务实现细节的附加实用程序。
  */
 public interface RpcSystem extends RpcSystemUtils, AutoCloseable {
 

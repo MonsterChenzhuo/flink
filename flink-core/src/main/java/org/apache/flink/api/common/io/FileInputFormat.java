@@ -59,6 +59,11 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  *
  * <p>After the {@link #open(FileInputSplit)} method completed, the file input data is available
  * from the {@link #stream} field.
+ *
+ * RichInputFormats从文件中读取的基类。对于特定的输入类型，需要实现nextRecord(Object)和reachedEnd()方法。
+ * 此外，还可以覆盖open(FileInputSplit)和close()来更改生命周期行为。
+ * 在open(FileInputSplit)方法完成之后，文件输入数据可以从流字段中获得。
+ *
  */
 @Public
 public abstract class FileInputFormat<OT> extends RichInputFormat<OT, FileInputSplit> {

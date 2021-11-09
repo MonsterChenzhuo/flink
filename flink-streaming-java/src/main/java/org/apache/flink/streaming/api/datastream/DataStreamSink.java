@@ -33,6 +33,9 @@ import org.apache.flink.streaming.api.transformations.SinkTransformation;
  * A Stream Sink. This is used for emitting elements from a streaming topology.
  *
  * @param <T> The type of the elements in the Stream
+ *
+ * 流sink。这用于从流拓扑发出元素。
+ * 类型参数:  -流中元素的类型
  */
 @Public
 public class DataStreamSink<T> {
@@ -63,6 +66,7 @@ public class DataStreamSink<T> {
     }
 
     /** Returns the transformation that contains the actual sink operator of this sink. */
+    /** 返回包含此接收器的实际接收操作符的转换。*/
     @Internal
     public LegacySinkTransformation<T> getTransformation() {
         if (transformation instanceof LegacySinkTransformation) {

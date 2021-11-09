@@ -42,6 +42,9 @@ import java.util.Objects;
  * }</pre>
  *
  * @param <T> the type of elements in the side-output stream.
+ * OutputTag是一个类型化和命名标记，用于标记操作符的边输出。 OutputTag必须始终是一个匿名内部类，以便Flink可以为泛型类型参数派生TypeInformation。
+ * 例子: OutputTag<Tuple2<String, Long>> info = new OutputTag<Tuple2<String, Long>>("late-data"){};
+ * 类型参数:  -侧输出流中的元素类型。
  */
 @PublicEvolving
 public class OutputTag<T> implements Serializable {

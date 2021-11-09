@@ -28,7 +28,7 @@ import static org.apache.flink.configuration.ConfigOptions.key;
 import static org.apache.flink.configuration.description.LinkElement.link;
 import static org.apache.flink.configuration.description.TextElement.code;
 import static org.apache.flink.configuration.description.TextElement.text;
-
+//** JobManager的配置选项。 */
 /** Configuration options for the JobManager. */
 @PublicEvolving
 public class JobManagerOptions {
@@ -44,6 +44,9 @@ public class JobManagerOptions {
      * resolution). It is not used in many high-availability setups, when a leader-election service
      * (like ZooKeeper) is used to elect and discover the JobManager leader from potentially
      * multiple standby JobManagers.
+     *
+     * 定义与作业管理器通信所连接的网络地址的配置参数。 该值仅在存在单个具有静态名称或地址的JobManager的设置中解释(简单的独立设置，或具有动态服务名称解析的容器设置)。
+     * 在许多高可用性设置中，当领导者选举服务(如ZooKeeper)用于从潜在的多个备用JobManager中选举和发现JobManager领导者时，它并不被使用。
      */
     @Documentation.Section({
         Documentation.Sections.COMMON_HOST_PORT,

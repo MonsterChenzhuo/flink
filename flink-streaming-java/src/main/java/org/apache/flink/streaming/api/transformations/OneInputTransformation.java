@@ -40,6 +40,8 @@ import java.util.List;
  *
  * @param <IN> The type of the elements in the input {@code Transformation}
  * @param <OUT> The type of the elements that result from this {@code OneInputTransformation}
+ * 这个转换表示将OneInputStreamOperator应用到一个输入转换。
+ * 类型参数:  -输入转换中元素的类型  -由这个OneInputTransformation产生的元素的类型
  */
 @Internal
 public class OneInputTransformation<IN, OUT> extends PhysicalTransformation<OUT> {

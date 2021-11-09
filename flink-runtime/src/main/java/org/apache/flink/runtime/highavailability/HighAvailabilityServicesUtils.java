@@ -52,6 +52,7 @@ import java.util.concurrent.Executor;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.StringUtils.isNullOrWhitespaceOnly;
 
+/** Utils类实例化HighAvailabilityServices实现。*/
 /** Utils class to instantiate {@link HighAvailabilityServices} implementations. */
 public class HighAvailabilityServicesUtils {
 
@@ -89,9 +90,9 @@ public class HighAvailabilityServicesUtils {
             RpcSystemUtils rpcSystemUtils,
             FatalErrorHandler fatalErrorHandler)
             throws Exception {
-
+        // 从配置文件拿到HA的模式
         HighAvailabilityMode highAvailabilityMode = HighAvailabilityMode.fromConfig(configuration);
-
+        //进行配置 非ha zkHA  K8SHA
         switch (highAvailabilityMode) {
             case NONE:
                 final Tuple2<String, Integer> hostnamePort = getJobManagerAddress(configuration);

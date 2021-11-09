@@ -27,6 +27,14 @@ import org.apache.flink.util.FlinkException;
  * A descriptor to deploy a cluster (e.g. Yarn) and return a Client for Cluster communication.
  *
  * @param <T> Type of the cluster id
+ *
+ * 主要是创建不同集群的连接,通过与具体资源管理器相连,创建对应集群
+ *      StanaloneClusterDescriptor
+ *      YarnClusterDescriptor
+ *      KubernetesClusterDescriptor
+ * 他可以跟对应的集群进行相连,我去提交一个作业,如果是native模式的时候它就会通过ClusterDescriptor
+ * 去连到Yarn的连接器,yarn的client上面
+ *
  */
 public interface ClusterDescriptor<T> extends AutoCloseable {
 

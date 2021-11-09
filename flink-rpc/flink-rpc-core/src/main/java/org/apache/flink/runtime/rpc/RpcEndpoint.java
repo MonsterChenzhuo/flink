@@ -78,6 +78,19 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  *
  * <p>The running state can be queried in a RPC method handler or in the main thread by calling
  * {@link #isRunning()} method.
+ * RPC端点的基类。提供远程过程调用的分布式组件必须扩展RPC端点基类。RPC端点由RpcService支持。
+ * 端点和网关 要做… 单线程端点执行 同一个端点上的所有RPC调用都由同一个线程(称为端点的主线程)调用。
+ * 因此，通过在主线程中执行所有状态更改操作，我们不必像在Erlang或Akka的Actor模型中那样推理并发访问。
+ * RPC端点提供了runAsync(Runnable)， callAsync(Callable, Time)和getMainThreadExecutor()来在RPC端点的主线程中执行代码。
+ * 生命周期 RPC端点有以下几个阶段: RPC端点是在非运行状态下创建的，并且不服务于任何RPC请求。
+ * 调用start()方法会触发RPC端点的开始，并安排对主线程的可重写的onStart()方法调用。
+ * 当启动操作结束时，RPC端点被移动到运行状态，并开始服务和完成RPC请求。
+ * 调用closeAsync()方法会触发RPC端点的终止，并安排对主线程的可重写的onStop()方法调用。
+ * 当调用onStop()方法时，它会触发一个异步停止操作。RPC端点不再处于运行状态，但它继续为RPC请求提供服务。
+ * 当异步停止操作结束时，RPC端点将完全终止，不再为RPC请求提供服务。
+ * 运行状态可以在RPC方法处理程序中查询，也可以通过调用isRunning()方法在主线程中查询。对应Akka的组件是演员
+ *
+ * 对应Akka的组件是Actor
  */
 public abstract class RpcEndpoint implements RpcGateway, AutoCloseableAsync {
 
@@ -174,6 +187,8 @@ public abstract class RpcEndpoint implements RpcGateway, AutoCloseableAsync {
      *
      * @throws Exception indicating that the rpc endpoint could not be started. If an exception
      *     occurs, then the rpc endpoint will automatically terminate.
+     * 内部方法，由RpcService实现调用该方法来启动RpcEndpoint。
+     * 抛出: Exception-指示rpc端点无法启动。如果发生异常，则rpc端点将自动终止。
      */
     public final void internalCallOnStart() throws Exception {
         validateRunsInMainThread();
@@ -192,6 +207,10 @@ public abstract class RpcEndpoint implements RpcGateway, AutoCloseableAsync {
      *
      * @throws Exception indicating that the rpc endpoint could not be started. If an exception
      *     occurs, then the rpc endpoint will automatically terminate.
+     * 用户可重写的回调，从internalCallOnStart()调用。 在启动RpcEndpoint时调用此方法。
+     * 该方法保证在主线程上下文中执行，并可用于在rpc端点的主线程上下文中启动rpc端点。
+     * 重要提示:用户不应该直接调用这个方法。
+     * 抛出: 异常-指示rpc端点无法启动。如果发生异常，则rpc端点将自动终止。
      */
     protected void onStart() throws Exception {}
 
@@ -257,6 +276,13 @@ public abstract class RpcEndpoint implements RpcGateway, AutoCloseableAsync {
      * @param selfGatewayType class of the self gateway type
      * @param <C> type of the self gateway to create
      * @return Self gateway of the specified type which can be used to issue asynchronous rpcs
+     * 返回指定类型的自网关，可用于对RpcEndpoint发出异步调用。 重要提示:自网关类型必须由rpcentpoint实现。否则该方法将失败。
+     * 参数: selfGatewayType自网关类型
+     * 类型参数: 要创建的自网关的类型
+     * 返回值: 指定类型的自网关，可用于发出异步rpc
+     * 推断注解: @org.jetbrains.annotations.NotNull
+     *
+     * 访问本地的方法
      */
     public <C extends RpcGateway> C getSelfGateway(Class<C> selfGatewayType) {
         if (selfGatewayType.isInstance(rpcServer)) {

@@ -39,6 +39,11 @@ import java.io.IOException;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
+/**
+ * 使用RecordWriter发送数据的Output实现。
+ * 类型参数:  -可以发出的元素的类型。
+ */
+
 /** Implementation of {@link Output} that sends data using a {@link RecordWriter}. */
 @Internal
 public class RecordWriterOutput<OUT> implements WatermarkGaugeExposingOutput<StreamRecord<OUT>> {

@@ -55,6 +55,16 @@ import java.util.Set;
  *   <li>Key names which can be templated, e.g. to refer to a specific column, should be listed
  *       using '#' as the placeholder symbol. For example, use {@code fields.#.min}.
  * </ul>
+ * 用于所有类型的工厂的基本接口，这些工厂从Flink的Table & SQL API中的键值对列表中创建对象实例。
+ * 工厂由Class和factoryIdentifier()唯一标识。 可用工厂列表是使用Java的服务提供程序接口(SPI)发现的。
+ * 实现此接口的类可以添加到META_INF/services/org.apache.flink.table.factories中。JAR文件中的工厂。
+ * 每个工厂声明一组必需和可选选项。此信息在发现期间不会使用，但在生成文档和执行验证时很有帮助。
+ * 一个工厂可能会发现更多的(嵌套的)工厂，嵌套工厂的选项不能在这个工厂的集合中声明。
+ * 在返回实例之前执行验证是每个工厂的责任。 为了一致性，建议ConfigOption的键名采用以下样式: 尽量重用键名。
+ * 以其他工厂实现为例。 键名应该用小写声明。使用“-”而不是点或驼峰格来分割单词。 键名应该在适当的地方分层。
+ * 想想如何在JSON或YAML文件中定义这样的层次结构(例如，sink.bulk-flush.max-actions)。
+ * 如果是层次结构，尽量不要在键名中再次使用较高层(例如do sink)。Partitioner而不是sink.sink-partitioner)以保持键短。
+ * 可以被模板化的键名，例如指向特定的列，应该使用'#'作为占位符来列出。例如，使用字段。#.min。
  */
 @PublicEvolving
 public interface Factory {

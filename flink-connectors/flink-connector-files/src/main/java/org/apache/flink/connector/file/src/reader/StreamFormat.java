@@ -96,6 +96,19 @@ import java.io.Serializable;
  * StreamFormat#FETCH_IO_SIZE} to configure that fetch size.
  *
  * @param <T> The type of records created by this format reader.
+ *
+ * 从流中读取单个记录的读取器格式。 外部类StreamFormat主要作为读取器的配置容器和工厂。
+ * 实际的读取是由StreamFormat完成的。Reader，它是基于createReader(Configuration, FSDataInputStream, long, long)方法中的输入流创建的，
+ * 并在方法restoreader (Configuration, FSDataInputStream, long, long)中恢复(从检查点位置)。
+ * 与BulkFormat相比，流格式可以处理一些开箱即用的事情，比如决定如何批处理记录或处理压缩。
+ * 有关该接口的简单版本，关于在检查点期间不支持分割或逻辑记录偏移的格式，请参见SimpleStreamFormat。
+ * 分裂 文件分割是指将一个文件分割成多个独立读取的区域。格式是否支持拆分是通过isSplittable()方法指定的。
+ * 分裂有潜力提高并行性和性能,但带来了额外的限制格式读者:读者需要能够找到一个一致的起点在抵消分裂开始的地方,附近的文件(如第二记录分隔符,或一块开始或同步标记)。
+ * 这并不一定适用于所有格式，这就是为什么拆分是可选的。 检查点 reader可以通过StreamFormat.Reader.getCheckpointedPosition()返回reader的当前位置。
+ * 这可以提高检查点的恢复速度。 默认情况下(如果该方法未被覆盖或返回null)，则从检查点恢复的工作方式是再次读取分割并跳过检查点之前处理的记录数量。
+ * 实现此方法允许格式直接查找该位置，而不是读取并丢弃数字或记录。 位置是文件中的偏移量和在偏移量之后要跳过的记录数的组合(参见CheckpointedPosition)。
+ * 这有助于格式不能通过偏移量描述所有记录位置，例如，因为记录被批量压缩或存储在柱状布局(例如，ORC, Parquet)。
+ * 默认行为可以被视为返回一个CheckpointedPosition，其中偏移量总是为零，并且只有CheckpointedPosition. getrecordsafteroffset()随着每条发出的记录递增。 可序列化的 与Flink中的许多其他API类一样，外部类是可序列化的，以支持将实例发送给分布式工作者以实现并行执行。这纯粹是RPC的短期序列化，没有一个实例会以序列化形式长期持久化。 批处理记录 在文件源内部，读取器将读取线程(执行通常阻塞的I/O操作)的批记录传递给执行流和批数据处理的异步邮箱线程。批量传递记录(而不是一次传递一个记录)大大减少了线程到线程的切换开销。 默认情况下，此批处理基于StreamFormat的I/O读取大小，这意味着从一个I/O缓冲区派生的记录集将作为一个传递。请参阅FETCH_IO_SIZE来配置获取大小。  类型参数:  -此格式读取器创建的记录类型。
  */
 @PublicEvolving
 public interface StreamFormat<T> extends Serializable, ResultTypeQueryable<T> {

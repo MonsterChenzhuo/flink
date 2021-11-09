@@ -41,6 +41,11 @@ public interface Committer<CommT> extends AutoCloseable {
      * @return A list of {@link CommT} needed to re-commit, which is needed in case we implement a
      *     "commit-with-retry" pattern.
      * @throws IOException if the commit operation fail and do not want to retry any more.
+     *
+     * 提交给定的CommT列表。
+     * 参数: committables——提交由接收器暂存的数据所需的信息列表。
+     * 返回值: 需要重新提交的CommT列表，如果我们实现“带重试的提交”模式，则需要它。
+     *
      */
     List<CommT> commit(List<CommT> committables) throws IOException, InterruptedException;
 }

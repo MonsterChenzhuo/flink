@@ -95,6 +95,16 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  * <p>In the case of a standalone cluster, that cluster-id needs to be configured via {@link
  * HighAvailabilityOptions#HA_CLUSTER_ID}. All nodes with the same cluster id will join the same
  * cluster and participate in the execution of the same set of jobs.
+ *
+ * Flink 高可用实现类
+ * 什么叫做高可用服务?
+ * 高可用服务是为了解决某一些组件的单点服务故障
+ * ZooKeeperHaServices在Flink的内部,其实是提供了两个功能:
+ *  1.选举
+ *      Flink HA集群:两个主节点谁是active
+ *      实现:基于分布式独占锁来完成选举的
+ *  2.监听
+ *      每一个从节点都需要知道主节点是谁,通过zk的监听来实现最快知道
  */
 public class ZooKeeperHaServices extends AbstractHaServices {
 

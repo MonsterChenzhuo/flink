@@ -102,6 +102,8 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  *   <li>{@link #registerJobManager(JobMasterId, ResourceID, String, JobID, Time)} registers a
  *       {@link JobMaster} at the resource manager
  * </ul>
+ *
+ * ResourceManager实现。资源管理器负责资源提取/分配和记帐
  */
 public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
         extends FencedRpcEndpoint<ResourceManagerId> implements ResourceManagerGateway {

@@ -52,6 +52,7 @@ import static org.apache.flink.util.Preconditions.checkArgument;
 /**
  * This test simulates readers that just produce byte arrays very fast. The test is meant to check
  * that this does not break the system in terms of object allocations, etc.
+ * 这个测试模拟了快速生成字节数组的读取器。测试的目的是检查这是否会在对象分配等方面破坏系统。
  */
 public class FileSourceHeavyThroughputTest {
 

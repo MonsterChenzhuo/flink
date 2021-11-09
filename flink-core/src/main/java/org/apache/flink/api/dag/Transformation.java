@@ -48,6 +48,11 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  * <p>API operations such as DataStream#map create a tree of {@code Transformation}s underneath.
  * When the stream program is to be executed this graph is translated to a StreamGraph using
  * StreamGraphGenerator.
+ * 转换表示创建DataStream的操作。每个DataStream都有一个底层的Transformation，它是所述DataStream的起源。
+ * 像DataStream#map这样的API操作会在下面创建一个转换树。
+ * 当流程序要执行时，使用StreamGraphGenerator将此图转换为StreamGraph。
+ * 在运行时，转换不一定对应于物理操作。有些操作只是逻辑概念。例如合并、分割/选择数据流、分区。
+ * 下面的转换图:
  *
  * <p>A {@code Transformation} does not necessarily correspond to a physical operation at runtime.
  * Some operations are only logical concepts. Examples of this are union, split/select data stream,
@@ -179,6 +184,11 @@ public abstract class Transformation<T> {
      *     the Log
      * @param outputType The output type of this {@code Transformation}
      * @param parallelism The parallelism of this {@code Transformation}
+     * 使用给定的名称、输出类型和并行性创建一个新的Transformation。
+     * 参数:
+     * name -转换的名称，这将在可视化和日志中显示
+     * outputType -此转换的输出类型
+     * 这个变换的并行性
      */
     public Transformation(String name, TypeInformation<T> outputType, int parallelism) {
         this.id = getNewNodeId();
@@ -204,6 +214,7 @@ public abstract class Transformation<T> {
     }
 
     /** Returns the parallelism of this {@code Transformation}. */
+    /**  返回{@code Transformation}的并行的 */
     public int getParallelism() {
         return parallelism;
     }
@@ -481,6 +492,8 @@ public abstract class Transformation<T> {
      * this is used once the output type cannot be changed anymore using {@link #setOutputType}.
      *
      * @return The output type of this {@code Transformation}
+     * 以类型信息的形式返回此转换的输出类型。一旦使用，输出类型就不能再使用setOutputType更改了。
+     * 返回值: 此转换的输出类型
      */
     public TypeInformation<T> getOutputType() {
         if (outputType instanceof MissingTypeInfo) {

@@ -31,6 +31,10 @@ import java.lang.annotation.Target;
  * versions of the same major release.
  *
  * <p>Only major releases (1.0, 2.0, 3.0) can break interfaces with this annotation.
+ * 将类标记为公共的、稳定的接口的注释。
+ * 带有此注释的类、方法和字段在小版本(1.0、1.1、1.2)中是稳定的。
+ * 换句话说，使用@Public注释类的应用程序将针对同一主要版本的新版本进行编译。
+ * 只有主要版本(1.0、2.0、3.0)可以使用此注释破坏接口。
  */
 @Documented
 @Target(ElementType.TYPE)

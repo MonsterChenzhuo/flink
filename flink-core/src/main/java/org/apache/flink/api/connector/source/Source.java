@@ -30,6 +30,9 @@ import java.io.Serializable;
  * @param <T> The type of records produced by the source.
  * @param <SplitT> The type of splits handled by the source.
  * @param <EnumChkT> The type of the enumerator checkpoints.
+ *
+ * Source的接口。它像一个工厂类，帮助构造SplitEnumerator和SourceReader以及相应的序列化器。
+ * 类型参数:  -源产生的记录类型。  -由源处理的分割类型。  -枚举器检查点的类型。
  */
 @Public
 public interface Source<T, SplitT extends SourceSplit, EnumChkT> extends Serializable {

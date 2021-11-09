@@ -24,7 +24,7 @@ import org.apache.flink.runtime.resourcemanager.StandaloneResourceManagerFactory
 import org.apache.flink.runtime.util.EnvironmentInformation;
 import org.apache.flink.runtime.util.JvmShutdownSafeguard;
 import org.apache.flink.runtime.util.SignalHandler;
-
+/** standalone集群的入口点。 */
 /** Entry point for the standalone session cluster. */
 public class StandaloneSessionClusterEntrypoint extends SessionClusterEntrypoint {
 
@@ -52,10 +52,10 @@ public class StandaloneSessionClusterEntrypoint extends SessionClusterEntrypoint
                         new EntrypointClusterConfigurationParserFactory(),
                         StandaloneSessionClusterEntrypoint.class);
         Configuration configuration = loadConfiguration(entrypointClusterConfiguration);
-
+        //构建实例对象
         StandaloneSessionClusterEntrypoint entrypoint =
                 new StandaloneSessionClusterEntrypoint(configuration);
-
+        //运行实例
         ClusterEntrypoint.runClusterEntrypoint(entrypoint);
     }
 }

@@ -110,6 +110,14 @@ import static org.apache.flink.table.types.logical.utils.LogicalTypeChecks.getSc
  * </pre>
  *
  * <p>Nullability is always handled by the container data structure.
+ * 内部数据结构的基本接口，表示RowType和其他(可能嵌套的)结构化类型(如表生态系统中的StructuredType)的数据。
+ * 运行时通过Table API或SQL管道传递的所有顶级记录都是这个接口的实例。每个RowData包含一个RowKind，它表示一行在变更日志中描述的变更类型。
+ * RowKind只是行的元数据信息，因此不是表模式的一部分，也就是说，不是一个专用字段。 注意:此数据结构的所有字段必须为内部数据结构。
+ * RowData接口有不同的实现，它们是为不同的场景设计的: 面向二进制的实现BinaryRowData是由对MemorySegment的引用支持的，
+ * 而不是使用Java对象来减少序列化/反序列化开销。 面向对象的实现GenericRowData是由一个Java对象数组支持的，该数组构造简单，更新效率高。
+ * GenericRowData是为公众使用的，并且具有稳定的行为。如果需要内部数据结构，建议使用这个类构造RowData实例。
+ * 从Flink的Table API和SQL数据类型到内部数据结构的映射如下表所示:
+ *
  */
 @PublicEvolving
 public interface RowData {
@@ -123,7 +131,7 @@ public interface RowData {
 
     /**
      * Returns the kind of change that this row describes in a changelog.
-     *
+     * 返回此行在更改日志中描述的更改类型。
      * @see RowKind
      */
     RowKind getRowKind();
@@ -150,7 +158,7 @@ public interface RowData {
 
     /** Returns the short value at the given position. */
     short getShort(int pos);
-
+    /** 返回给定位置的整数值 */
     /** Returns the integer value at the given position. */
     int getInt(int pos);
 
@@ -198,6 +206,7 @@ public interface RowData {
      * Returns the row value at the given position.
      *
      * <p>The number of fields is required to correctly extract the row.
+     * 返回给定位置的行值。 正确提取行所需的字段数量。
      */
     RowData getRow(int pos, int numFields);
 

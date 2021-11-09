@@ -38,6 +38,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+/** 内部获取器可运行，负责从外部系统轮询消息。 */
 /** The internal fetcher runnable responsible for polling message from the external system. */
 @Internal
 public class SplitFetcher<E, SplitT extends SourceSplit> implements Runnable {
@@ -47,6 +48,7 @@ public class SplitFetcher<E, SplitT extends SourceSplit> implements Runnable {
     private final int id;
     private final BlockingDeque<SplitFetcherTask> taskQueue;
     // track the assigned splits so we can suspend the reader when there is no splits assigned.
+    //跟踪分配的分割，这样当没有分配的分割时，我们可以挂起阅读器
     private final Map<String, SplitT> assignedSplits;
     private final FutureCompletingBlockingQueue<RecordsWithSplitIds<E>> elementsQueue;
     private final SplitReader<E, SplitT> splitReader;
@@ -63,6 +65,8 @@ public class SplitFetcher<E, SplitT extends SourceSplit> implements Runnable {
      * Flag whether this fetcher has no work assigned at the moment. Fetcher that have work (a
      * split) assigned but are currently blocked (for example enqueueing a fetch and hitting the
      * element queue limit) are NOT considered idle.
+     * 标志这个取件器目前是否没有分配工作。
+     * 已经分配了工作(一个分割)但当前阻塞的取操作(例如进入取操作队列并达到元素队列限制)不被认为是空闲的。
      */
     @GuardedBy("lock")
     private volatile boolean isIdle;
@@ -116,10 +120,13 @@ public class SplitFetcher<E, SplitT extends SourceSplit> implements Runnable {
             // This executes after possible errorHandler.accept(t). If these operations bear
             // a happens-before relation, then we can checking side effect of errorHandler.accept(t)
             // to know whether it happened after observing side effect of shutdownHook.run().
+            //它在可能的errorHandler.accept(t)之后执行。如果这些操作具有happens-before关系，
+            // 则可以在观察shutdownHook.run()的副作用后，检查errorHandler.accept(t)的副作用，以了解它是否发生。
             shutdownHook.run();
         }
     }
 
+    /** 打包私有方法来帮助单元测试 */
     /** Package private method to help unit test. */
     void runOnce() {
         try {
@@ -169,6 +176,8 @@ public class SplitFetcher<E, SplitT extends SourceSplit> implements Runnable {
      * Add splits to the split fetcher. This operation is asynchronous.
      *
      * @param splitsToAdd the splits to add.
+     * 向分割取取器添加分割。此操作为异步操作。
+     * 参数: splitsToAdd—要添加的分割。
      */
     public void addSplits(List<SplitT> splitsToAdd) {
         enqueueTask(new AddSplitsTask<>(splitReader, splitsToAdd, assignedSplits));
@@ -202,6 +211,8 @@ public class SplitFetcher<E, SplitT extends SourceSplit> implements Runnable {
      * Package private for unit test.
      *
      * @return the assigned splits.
+     * 包私有的单元测试。
+     * 返回值: 分配的分裂
      */
     Map<String, SplitT> assignedSplits() {
         return assignedSplits;
@@ -262,6 +273,16 @@ public class SplitFetcher<E, SplitT extends SourceSplit> implements Runnable {
      *
      * <p>The above logic only works in the same {@link #runOnce()} invocation. So we need to
      * synchronize to ensure the wake up logic do not touch a different invocation.
+     * 唤醒获取线程。在一个正在运行的获取器中只有两个阻塞点。1. 从任务队列中取出下一个任务。2. 运行一个任务。
+     * 他们需要以不同的方式被唤醒。如果获取器阻塞等待任务队列中的下一个任务，我们应该直接中断获取线程。
+     * 如果读取器正在运行用户split reader，我们应该调用SplitReader.wakeUp()而不是天真地中断线程。
+     * 正确性可以用下面的方法来考虑。唤醒的目的是让获取线程回到运行循环的最开始。在循环的每次运行中有三个主要事件。
+     * 选择任务(阻塞) 将任务分配给runningTask变量。 运行runningTask。(阻碍) 我们不需要担心步骤3之后的事情，因为不再有阻塞点了。
+     * 我们总是在唤醒取线程时首先设置唤醒标志，然后使用运行任务的值来确定取线程的位置。
+     * 如果runningThread是null，那么它在第2步之前，所以我们应该中断取线程。
+     * 这个中断不会传播到分割读取器，因为wakeUp标志将阻止fetchTask运行。
+     * 如果runningThread不为空，则它在步骤2之后。所以我们应该唤醒分割读取器而不是中断读取器。
+     * 上述逻辑仅在相同的runOnce()调用中有效。因此，我们需要进行同步，以确保唤醒逻辑不会触及不同的调用。
      */
     void wakeUp(boolean taskOnly) {
         // Synchronize to make sure the wake up only works for the current invocation of runOnce().

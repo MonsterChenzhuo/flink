@@ -60,6 +60,8 @@ public class RpcEndpointTest extends TestLogger {
     /**
      * Tests that we can obtain the self gateway from a RpcEndpoint and can interact with it via the
      * self gateway.
+     *
+     * 测试我们可以从一个rpc entpoint获得自网关，并可以通过自网关与它交互。
      */
     @Test
     public void testSelfGateway() throws Exception {
@@ -67,8 +69,9 @@ public class RpcEndpointTest extends TestLogger {
         BaseEndpoint baseEndpoint = new BaseEndpoint(rpcService, expectedValue);
 
         try {
+            // 启动  server服务   就会执行BaseEndpoint里面声明周期方法onStart()
             baseEndpoint.start();
-
+            // 调用本地的Rpc方法
             BaseGateway baseGateway = baseEndpoint.getSelfGateway(BaseGateway.class);
 
             CompletableFuture<Integer> foobar = baseGateway.foobar();
@@ -82,6 +85,7 @@ public class RpcEndpointTest extends TestLogger {
     /**
      * Tests that we cannot accidentally obtain a wrong self gateway type which is not implemented
      * by the RpcEndpoint.
+     * 测试我们不能意外地获得没有由rpcentpoint实现的错误的自网关类型。
      */
     @Test(expected = RuntimeException.class)
     public void testWrongSelfGateway() throws Exception {
@@ -103,6 +107,7 @@ public class RpcEndpointTest extends TestLogger {
     /**
      * Tests that we can extend existing RpcEndpoints and can communicate with them via the self
      * gateways.
+     * 我们可以扩展现有的RpcEndpoints，并可以通过自网关与它们通信的测试。
      */
     @Test
     public void testEndpointInheritance() throws Exception {
@@ -130,6 +135,7 @@ public class RpcEndpointTest extends TestLogger {
     }
 
     /** Tests that the RPC is running after it has been started. */
+    /** 测试RPC在启动后是否正在运行。 */
     @Test
     public void testRunningState()
             throws InterruptedException, ExecutionException, TimeoutException {
@@ -148,6 +154,7 @@ public class RpcEndpointTest extends TestLogger {
     }
 
     /** Tests that the RPC is not running if it is being stopped. */
+    /** 如果RPC正在停止，则测试它没有运行。 */
     @Test
     public void testNotRunningState()
             throws InterruptedException, ExecutionException, TimeoutException {
@@ -258,6 +265,7 @@ public class RpcEndpointTest extends TestLogger {
     }
 
     /** Tests executing the runnable in the main thread of the underlying RPC endpoint. */
+    /** 测试在底层RPC端点的主线程中执行可运行程序。*/
     @Test
     public void testExecute() throws InterruptedException, ExecutionException, TimeoutException {
         final RpcEndpoint endpoint = new BaseEndpoint(rpcService);
@@ -331,6 +339,9 @@ public class RpcEndpointTest extends TestLogger {
      * future for the result of the callable. If the callable is not completed within the given
      * timeout, then the future will be failed with a TimeoutException. This schedule method is
      * called directly from RpcEndpoint, MainThreadExecutor do not support this method.
+     * 测试在底层RPC服务的主线程中执行可调用对象，为可调用对象的结果返回一个future。
+     * 如果可调用对象没有在给定的超时内完成，则future将会以TimeoutException失败。
+     * 这个调度方法直接从RpcEndpoint调用，MainThreadExecutor不支持这个方法。
      */
     @Test
     public void testCallAsync() throws InterruptedException, ExecutionException, TimeoutException {
@@ -354,6 +365,7 @@ public class RpcEndpointTest extends TestLogger {
     /**
      * Make the callable sleep some time more than specified timeout, so TimeoutException is
      * expected.
+     * 使可调用对象的休眠时间比指定的超时时间长一些，因此预期会出现TimeoutException。
      */
     @Test
     public void testCallAsyncTimeout()

@@ -42,6 +42,12 @@ import java.util.stream.Collectors;
  * multiValue1 --multi multiValue2. If {@link MultipleParameterTool} object is used for
  * GlobalJobParameters, the last one of multiple values will be used. Navigate to {@link #toMap()}
  * for more information.
+ *
+ * 这个类提供了简单的实用程序方法来读取和解析来自不同来源的程序参数。
+ * 可以支持args中的多个值参数。
+ * 例如，--multi multiValue1 --multi multiValue2。
+ * 如果GlobalJobParameters使用MultipleParameterTool对象，将使用多个值中的最后一个。
+ * 导航到toMap()获取更多信息。
  */
 @PublicEvolving
 public class MultipleParameterTool extends AbstractParameterTool {

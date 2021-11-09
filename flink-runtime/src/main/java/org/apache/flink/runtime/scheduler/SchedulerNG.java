@@ -64,6 +64,9 @@ import java.util.concurrent.CompletableFuture;
  *
  * <p>Implementations can expect that methods will not be invoked concurrently. In fact, all
  * invocations will originate from a thread in the {@link ComponentMainThreadExecutor}.
+ * Flink作业调度接口。
+ * 实例通过SchedulerNGFactory创建，并在实例化时接收JobGraph。
+ * 实现可以期望方法不会被并发调用。事实上，所有调用都起源于ComponentMainThreadExecutor中的一个线程。
  */
 public interface SchedulerNG extends AutoCloseableAsync {
 

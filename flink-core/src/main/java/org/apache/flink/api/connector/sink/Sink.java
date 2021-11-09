@@ -52,6 +52,19 @@ import java.util.OptionalLong;
  * @param <CommT> The type of information needed to commit data staged by the sink
  * @param <WriterStateT> The type of the sink writer's state
  * @param <GlobalCommT> The type of the aggregated committable
+ *
+ * 该接口允许接收开发人员构建一个简单的接收拓扑，如果有Committer或GlobalCommitter，则可以在批处理和流执行模式下保证只执行一次语义。
+ * 1. SinkWriter负责生成可提交的。
+ * 2. Committer负责提交单个可提交项。
+ * 3.GlobalCommitter负责提交一个聚合的可提交对象，我们称之为全局可提交对象。
+ * GlobalCommitter总是以1的并行度执行。注:开发人员需要确保Committer和GlobalCommitter的幂等性。
+ * 接收器必须总是有一个写入器，但是提交器和全局提交器都是可选的，并且所有组合都是有效的。
+ * Sink需要是可序列化的。所有配置都应该被及时验证。各自的接收器部分是暂时的，只会在任务管理器上的子任务中创建。
+ * 类型参数: < InputT> -接收器输入的类型
+ *                   -提交由接收器暂存的数据所需的信息类型
+ *                   -接收器写入器的状态类型
+ *                   -聚合可提交的类型
+ *
  */
 @Experimental
 public interface Sink<InputT, CommT, WriterStateT, GlobalCommT> extends Serializable {
@@ -70,6 +83,14 @@ public interface Sink<InputT, CommT, WriterStateT, GlobalCommT> extends Serializ
      * @see SinkWriter#snapshotState(long)
      * @see #getWriterStateSerializer()
      * @see #getCompatibleStateNames()
+     *
+     * 创建一个SinkWriter。如果应用程序从检查点或保存点恢复，并且接收器是有状态的，
+     * 它将接收到用SinkWriter.snapshotState(long)获得的相应状态，并用getWriterStateSerializer()序列化。
+     * 如果不存在状态，则加载并传递getCompatibleStateNames()中指定的第一个已存在的兼容状态。
+     * 参数: context—运行时上下文。
+     *      States—作者以前的状态。
+     * 返回值: SinkWriter。
+     *110.247
      */
     SinkWriter<InputT, CommT, WriterStateT> createWriter(
             InitContext context, List<WriterStateT> states) throws IOException;
@@ -130,6 +151,7 @@ public interface Sink<InputT, CommT, WriterStateT, GlobalCommT> extends Serializ
     }
 
     /** The interface exposes some runtime info for creating a {@link SinkWriter}. */
+    /** 该接口公开了一些用于创建{@link SinkWriter}的运行时信息。*/
     interface InitContext {
         /**
          * Gets the {@link UserCodeClassLoader} to load classes that are not in system's classpath,

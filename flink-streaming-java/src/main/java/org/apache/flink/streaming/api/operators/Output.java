@@ -32,6 +32,9 @@ import org.apache.flink.util.OutputTag;
  * watermarks, from an operator.
  *
  * @param <T> The type of the elements that can be emitted.
+ *
+ * StreamOperator与该接口的对象一起提供，可以使用该对象从操作符发出元素和其他消息，如屏障和水印。
+ * 类型参数:  -可以发出的元素的类型。
  */
 @PublicEvolving
 public interface Output<T> extends Collector<T> {

@@ -181,6 +181,7 @@ public class FileSink<IN> implements Sink<IN, FileSinkCommittable, FileWriterBuc
     }
 
     /** The base abstract class for the {@link RowFormatBuilder} and {@link BulkFormatBuilder}. */
+    /** {@link RowFormatBuilder}和{@link BulkFormatBuilder}的基抽象类 */
     @Internal
     private abstract static class BucketsBuilder<IN, T extends BucketsBuilder<IN, T>>
             implements Serializable {

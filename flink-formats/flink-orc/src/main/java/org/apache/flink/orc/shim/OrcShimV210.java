@@ -23,6 +23,7 @@ import org.apache.orc.RecordReader;
 
 import java.io.IOException;
 
+/** Shim orc为Hive版本2.1.0和更高版本。 */
 /** Shim orc for Hive version 2.1.0 and upper versions. */
 public class OrcShimV210 extends OrcShimV200 {
 

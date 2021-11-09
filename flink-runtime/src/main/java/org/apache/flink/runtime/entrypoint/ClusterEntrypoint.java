@@ -100,6 +100,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Base class for the Flink cluster entry points.
  *
  * <p>Specialization of this class can be used for the session mode and the per-job mode
+ *
+ * Flink集群入口点的基类。 该类的专门化可用于会话模式和每个作业模式
  */
 public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErrorHandler {
 
@@ -190,6 +192,7 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
             securityContext.runSecured(
                     (Callable<Void>)
                             () -> {
+                        //TODO
                                 runCluster(configuration, pluginManager);
 
                                 return null;
@@ -237,9 +240,25 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
         return SecurityUtils.getInstalledContext();
     }
 
+    /**
+     * 启动主节点的核心代码
+     * 1.启动各种基础服务
+     * 2.创建主节点当中非常重要的三个组件的工厂实例 Conponent
+     *  RestServerFactory
+     *  DispatcherFactory
+     *  ResourceManagerFactory
+     * 3.启动这三个个组件
+     *  RestServer
+     *  Dispatcher
+     *  ResourceManager
+     * @param configuration
+     * @param pluginManager
+     * @throws Exception
+     */
     private void runCluster(Configuration configuration, PluginManager pluginManager)
             throws Exception {
         synchronized (lock) {
+            //初始化各种服务
             initializeServices(configuration, pluginManager);
 
             // write host information into configuration
@@ -294,6 +313,7 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
         LOG.info("Initializing cluster services.");
 
         synchronized (lock) {
+            // 1.Rpc服务
             rpcSystem = RpcSystem.load(configuration);
 
             commonRpcService =
@@ -304,21 +324,25 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
                             getRPCPortRange(configuration),
                             configuration.getString(JobManagerOptions.BIND_HOST),
                             configuration.getOptional(JobManagerOptions.RPC_BIND_PORT));
-
+            // 2.JMX服务
             JMXService.startInstance(configuration.getString(JMXServerOptions.JMX_SERVER_PORT));
 
             // update the configuration used to create the high availability services
             configuration.setString(JobManagerOptions.ADDRESS, commonRpcService.getAddress());
             configuration.setInteger(JobManagerOptions.PORT, commonRpcService.getPort());
-
+            // 3.线程池服务
             ioExecutor =
                     Executors.newFixedThreadPool(
                             ClusterEntrypointUtils.getPoolSize(configuration),
                             new ExecutorThreadFactory("cluster-io"));
+            // 4.高可用服务
             haServices = createHaServices(configuration, ioExecutor, rpcSystem);
+            // 5.大对象服务
             blobServer = new BlobServer(configuration, haServices.createBlobStore());
             blobServer.start();
+            // 6.心跳服务
             heartbeatServices = createHeartbeatServices(configuration);
+            // 7.性能监控服务
             metricRegistry = createMetricRegistry(configuration, pluginManager, rpcSystem);
 
             final RpcService metricQueryServiceRpcService =
@@ -334,7 +358,7 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
                             hostname,
                             ConfigurationUtils.getSystemResourceMetricsProbingInterval(
                                     configuration));
-
+            // executionGraph存储服务
             executionGraphInfoStore =
                     createSerializableExecutionGraphStore(
                             configuration, commonRpcService.getScheduledExecutor());
@@ -354,10 +378,11 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
             return String.valueOf(configuration.getInteger(JobManagerOptions.PORT));
         }
     }
-
+    // 就是Flink高可用服务的抽象
     protected HighAvailabilityServices createHaServices(
             Configuration configuration, Executor executor, RpcSystemUtils rpcSystemUtils)
             throws Exception {
+        // 创建一个HA的Services
         return HighAvailabilityServicesUtils.createHighAvailabilityServices(
                 configuration,
                 executor,
@@ -614,6 +639,7 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
 
         final String clusterEntrypointName = clusterEntrypoint.getClass().getSimpleName();
         try {
+            //TODO:
             clusterEntrypoint.startCluster();
         } catch (ClusterEntrypointException e) {
             LOG.error(

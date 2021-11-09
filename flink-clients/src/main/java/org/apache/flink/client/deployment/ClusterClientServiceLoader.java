@@ -25,6 +25,9 @@ import java.util.stream.Stream;
 /**
  * An interface used to discover the appropriate {@link ClusterClientFactory cluster client factory}
  * based on the provided {@link Configuration}.
+ * 基于提供的{@link Configuration}，用于发现合适的{@link ClusterClientFactory 集群客户端工厂}的接口。
+ * SPI技术,通过Java的SPI去加载ClusterClientFactory
+ *
  */
 public interface ClusterClientServiceLoader {
 

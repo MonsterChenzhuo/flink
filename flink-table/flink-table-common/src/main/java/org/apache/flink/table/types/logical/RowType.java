@@ -49,6 +49,11 @@ import static org.apache.flink.table.utils.EncodingUtils.escapeSingleQuotes;
  * <p>The serialized string representation is {@code ROW<n0 t0 'd0', n1 t1 'd1', ...>} where {@code
  * n} is the unique name of a field, {@code t} is the logical type of a field, {@code d} is the
  * description of a field. {@code ROW(...)} is a synonym for being closer to the SQL standard.
+ *
+ * 字段序列的逻辑类型。字段由字段名、字段类型和可选描述组成。表中最特定的行类型是行类型。
+ * 在本例中，行中的每一列对应于与列具有相同序数位置的行类型的字段。
+ * 与SQL标准相比，可选字段描述简化了对复杂结构的处理。
+ * 序列化字符串表示为ROW  ，其中n是字段的唯一名称，t是字段的逻辑类型，d是字段的描述。ROW(…)是接近SQL标准的同义词。
  */
 @PublicEvolving
 public final class RowType extends LogicalType {

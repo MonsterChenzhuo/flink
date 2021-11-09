@@ -1346,6 +1346,13 @@ public class StreamExecutionEnvironment {
      * @param filePath The path of the file, as a URI (e.g., "file:///some/local/file" or
      *     "hdfs://host:port/file/path").
      * @return The data stream that represents the data read from the given file as text lines
+     *
+     * 逐行读取给定的文件，并创建一个数据流，该数据流包含一个字符串，其中包含每一行的内容。
+     * 将使用UTF-8字符集读取文件。
+     * 关于检查点的注意事项:源监视路径，创建要处理的fileinputsplit，将它们转发给下游的读取器以读取实际数据，然后退出，
+     * 而不等待读取器完成读取。这意味着在源退出后不再转发检查点障碍，因此在该点之后就没有检查点了。
+     * 参数: filePath -文件的路径，用URI表示(例如，"file:///some/local/file"或"hdfs://host:port/file/path")。
+     * 返回值: 将从给定文件读取的数据表示为文本行的数据流
      */
     public DataStreamSource<String> readTextFile(String filePath) {
         return readTextFile(filePath, "UTF-8");
@@ -1366,14 +1373,27 @@ public class StreamExecutionEnvironment {
      *     "hdfs://host:port/file/path")
      * @param charsetName The name of the character set used to read the file
      * @return The data stream that represents the data read from the given file as text lines
+     *
+     * 逐行读取给定的文件，并创建一个数据流，该数据流包含一个字符串，其中包含每一行的内容。
+     * 带有指定名称的java.nio.charset.Charset将用于读取文件。
+     * 关于检查点的注意事项:源监视路径，创建要处理的fileinputsplit，将它们转发给下游的读取器以读取实际数据，然后退出，
+     * 而不等待读取器完成读取。这意味着在源退出后不再转发检查点障碍，因此在该点之后就没有检查点了。
+     * 参数: filePath—文件的路径，用URI表示(例如，"file:///some/local/file"或"hdfs://host:port/file/path")
+     * charsetName—用于读取文件的字符集的名称 返回值: 将从给定文件读取的数据表示为文本行的数据流
      */
     public DataStreamSource<String> readTextFile(String filePath, String charsetName) {
+        // 做效验
         Preconditions.checkArgument(
                 !StringUtils.isNullOrWhitespaceOnly(filePath),
                 "The file path must not be null or blank.");
-
-        TextInputFormat format = new TextInputFormat(new Path(filePath));
+        /**
+         * TextInputFormat输入格式化类 [复用MapReduce中概念]
+         * 1.算出数据有多少的分区
+         * 2.他可以拿到对每个分区的输入记录读取器RecordReader
+         */
+        TextInputFormat format = new TextInputFormat(new Path(filePath));  //拿到scheam
         format.setFilesFilter(FilePathFilter.createDefaultFilter());
+        // 读入的数据类型
         TypeInformation<String> typeInfo = BasicTypeInfo.STRING_TYPE_INFO;
         format.setCharsetName(charsetName);
 
@@ -1403,6 +1423,8 @@ public class StreamExecutionEnvironment {
      * @param inputFormat The input format used to create the data stream
      * @param <OUT> The type of the returned data stream
      * @return The data stream that represents the data read from the given file
+     *
+     *
      */
     public <OUT> DataStreamSource<OUT> readFile(FileInputFormat<OUT> inputFormat, String filePath) {
         return readFile(inputFormat, filePath, FileProcessingMode.PROCESS_ONCE, -1);
@@ -1483,6 +1505,22 @@ public class StreamExecutionEnvironment {
      *     millis) between consecutive path scans
      * @param <OUT> The type of the returned data stream
      * @return The data stream that represents the data read from the given file
+     *
+     * 根据给定的FileInputFormat读取用户指定的filePath的内容。
+     * 根据所提供的FileProcessingMode，源可以定期监视(每间隔毫秒)路径的新数据(FileProcessingMode. process_continuously)，
+     * 或处理当前路径中的数据并退出(FileProcessingMode. process_once)。
+     * 此外，如果路径中包含不需要处理的文件，用户可以指定一个自定义的FilePathFilter。
+     * 作为默认实现，可以使用FilePathFilter.createDefaultFilter()。
+     * 由于所有数据流都需要关于其类型的特定信息，因此该方法需要确定输入格式生成的数据的类型。
+     * 它将尝试通过反射确定数据类型，除非输入格式实现ResultTypeQueryable接口。
+     * 在后一种情况下，该方法将调用ResultTypeQueryable.getProducedType()方法来确定输入格式生成的数据类型。
+     * 注意事项:如果watchType设置为FileProcessingMode。PROCESS_ONCE源只监视一次路径，创建要处理的fileinputsplit，
+     * 将它们转发给下游的读取器以读取实际数据，然后退出，而不等待读取器完成读取。这意味着在源退出后不再转发检查点障碍，因此在该点之后就没有检查点了。
+     * 参数: inputFormat -用于创建数据流的输入格式 filePath—文件的路径，用URI表示(例如，"file:///some/local/file"或"hdfs://host:port/file/path")
+     * watchType -源操作的模式，例如监视路径并对新数据作出反应，或者只处理一次并退出
+     * interval—在周期路径监控的情况下，指定连续路径扫描之间的间隔(单位为millis)
+     * 类型参数:  -返回数据流的类型
+     * 返回值: 表示从给定文件读取的数据的数据流
      */
     @PublicEvolving
     public <OUT> DataStreamSource<OUT> readFile(
@@ -1558,15 +1596,28 @@ public class StreamExecutionEnvironment {
      *     millis) between consecutive path scans
      * @param <OUT> The type of the returned data stream
      * @return The data stream that represents the data read from the given file
+     *
+     * 根据给定的FileInputFormat读取用户指定的filePath的内容。根据所提供的FileProcessingMode，
+     * 源可以定期监视(每间隔毫秒)路径的新数据(FileProcessingMode. process_continuously)，
+     * 或处理当前路径中的数据并退出(FileProcessingMode. process_once)。
+     * 此外，如果路径中包含不需要处理的文件，用户可以指定一个自定义的FilePathFilter。
+     * 作为默认实现，可以使用FilePathFilter.createDefaultFilter()。
+     * 注意事项:如果watchType设置为FileProcessingMode。
+     * PROCESS_ONCE源只监视一次路径，创建要处理的fileinputsplit，将它们转发给下游的读取器以读取实际数据，
+     * 然后退出，而不等待读取器完成读取。这意味着在源退出后不再转发检查点障碍，因此在该点之后就没有检查点了。
+     * 参数: inputFormat -用于创建数据流的输入格式 filePath—文件的路径，用URI表示(例如，"file:///some/local/file"或"hdfs://host:port/file/path")
+     * watchType -源操作的模式，例如监视路径并对新数据作出反应，或者只处理一次并退出 interval—在周期路径监控的情况下，指定连续路径扫描之间的间隔(单位为millis)
+     * typeInformation—关于输出流中元素类型的信息
+     * 类型参数:  -返回数据流的类型 返回值: 表示从给定文件读取的数据的数据流
      */
     @PublicEvolving
     public <OUT> DataStreamSource<OUT> readFile(
             FileInputFormat<OUT> inputFormat,
             String filePath,
-            FileProcessingMode watchType,
+            FileProcessingMode watchType,  //读取文件模式  1.加载一次  2.持续加载
             long interval,
             TypeInformation<OUT> typeInformation) {
-
+        // 效验
         Preconditions.checkNotNull(inputFormat, "InputFormat must not be null.");
         Preconditions.checkArgument(
                 !StringUtils.isNullOrWhitespaceOnly(filePath),
@@ -1755,10 +1806,10 @@ public class StreamExecutionEnvironment {
     }
 
     private <OUT> DataStreamSource<OUT> createFileInput(
-            FileInputFormat<OUT> inputFormat,
+            FileInputFormat<OUT> inputFormat,  //数据格式
             TypeInformation<OUT> typeInfo,
             String sourceName,
-            FileProcessingMode monitoringMode,
+            FileProcessingMode monitoringMode,  //模式
             long interval) {
 
         Preconditions.checkNotNull(inputFormat, "Unspecified file input format.");
@@ -1779,7 +1830,7 @@ public class StreamExecutionEnvironment {
 
         ContinuousFileReaderOperatorFactory<OUT, TimestampedFileInputSplit> factory =
                 new ContinuousFileReaderOperatorFactory<>(inputFormat);
-
+        // 有界性的定义  1.无界  2.有界
         final Boundedness boundedness =
                 monitoringMode == FileProcessingMode.PROCESS_ONCE
                         ? Boundedness.BOUNDED
@@ -1787,9 +1838,9 @@ public class StreamExecutionEnvironment {
 
         SingleOutputStreamOperator<OUT> source =
                 addSource(monitoringFunction, sourceName, null, boundedness)
-                        .transform("Split Reader: " + sourceName, typeInfo, factory);
+                        .transform( "Split Reader: " + sourceName, typeInfo, factory);
 
-        return new DataStreamSource<>(source);
+        return new DataStreamSource<>(source);  //构造DataStreamSource会连带将父类DataStream进行构造
     }
 
     /**
@@ -2204,6 +2255,10 @@ public class StreamExecutionEnvironment {
      *
      * <p>This is not meant to be used by users. The API methods that create operators must call
      * this method.
+     *
+     * 将操作符添加到调用execute时应执行的操作符列表中。
+     * 当调用execute()时，只执行先前添加到列表中的操作符。
+     * 这并不是为了供用户使用。创建操作符的API方法必须调用这个方法。
      */
     @Internal
     public void addOperator(Transformation<?> transformation) {

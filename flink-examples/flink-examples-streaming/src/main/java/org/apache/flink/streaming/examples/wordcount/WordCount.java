@@ -42,6 +42,17 @@ import org.apache.flink.util.Preconditions;
  *   <li>use tuple data types,
  *   <li>write and use user-defined functions.
  * </ul>
+ * 1.写业务代码
+ * 2.生成jar包
+ * 3.通过启动flink run
+ * 4.启动一个客户端:java ClientFrontend类JVM(客户端进程)
+ * ClientFrontend[辅ruan探的]的main方法内部会:
+ *  1.会通过反射的方式,来拿到我们业务类的main方法实例,然后执行main方法
+ *  2.执行这个业务实例的类的main方法,最后一个步骤,就是执行提交:env.execute("word Count")
+ * 5.首先通过用户代码构建Application的Graph(StreamGraph+JobGraph)
+ * 6.在生成一个Rest客户端
+ * 7.通过这个Rest客户端提交JobGraph给服务端(Flink集群的主节点,接收处理)
+ *
  */
 public class WordCount {
 
@@ -61,6 +72,7 @@ public class WordCount {
         env.getConfig().setGlobalJobParameters(params);
 
         // get input data
+        //得到数据抽象对象DataStream
         DataStream<String> text = null;
         if (params.has("input")) {
             // union all the inputs from text files
@@ -78,7 +90,11 @@ public class WordCount {
             // get default test text data
             text = env.fromElements(WordCountData.WORDS);
         }
-
+        /**
+         * env对象中的transformations 集合中
+         * 为了接下来提交Job的时候,可以给这个Application构建StreamGraph
+         * StreamGraph 中的每个顶点就是StreaNode就是通过遍历transformations中的每个Transformation构建出来的
+         */
         DataStream<Tuple2<String, Integer>> counts =
                 // split up the lines in pairs (2-tuples) containing: (word,1)
                 text.flatMap(new Tokenizer())
@@ -87,6 +103,7 @@ public class WordCount {
                         .sum(1);
 
         // emit result
+        // 处理计算结果
         if (params.has("output")) {
             counts.writeAsText(params.get("output"));
         } else {
