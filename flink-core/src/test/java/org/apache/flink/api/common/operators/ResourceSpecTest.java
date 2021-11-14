@@ -34,6 +34,8 @@ import static org.junit.Assert.assertTrue;
 /**
  * Tests for ResourceSpec class, including its all public api: isValid, lessThanOrEqual, equals,
  * hashCode and merge.
+ * ResourceSpec类的测试，包括它的所有公共api: isValid, lessThanOrEqual, equals, hashCode和merge。
+ *
  */
 public class ResourceSpecTest extends TestLogger {
     private static final String EXTERNAL_RESOURCE_NAME = "gpu";

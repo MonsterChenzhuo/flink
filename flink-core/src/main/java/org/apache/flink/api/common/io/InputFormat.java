@@ -42,6 +42,7 @@ import java.io.Serializable;
  * <p>The life cycle of an input format is the following:
  *
  * <ol>
+ *
  *   <li>After being instantiated (parameterless), it is configured with a {@link Configuration}
  *       object. Basic fields are read from the configuration, such as a file path, if the format
  *       describes files as input.
@@ -62,6 +63,15 @@ import java.io.Serializable;
  * @see BaseStatistics
  * @param <OT> The type of the produced records.
  * @param <T> The type of input split.
+ * 产生记录的数据源的基本接口。 输入格式处理以下内容: 它描述了如何将输入分割成可以并行处理的分割。
+ * 它描述了如何从输入分割中读取记录。 它描述了如何从输入中收集基本统计信息。
+ * 输入格式的生命周期如下: 在被实例化(无参数)之后，它被配置为一个Configuration对象。
+ * 如果格式将文件描述为输入，则从配置中读取基本字段，例如文件路径。
+ * 可选:编译器调用它来生成关于输入的基本统计信息。 调用它来创建输入分割。
+ * 每个并行输入任务创建一个实例，配置它，并为特定的分割打开它。
+ * 从输入中读取所有记录 输入格式关闭 重要注意:输入格式的编写必须使实例在关闭后可以再次打开。
+ * 这是由于输入格式可能用于多个分割。在一次拆分完成后，将调用格式的close函数，如果有另一个拆分可用，则随后将为下一次拆分调用open函数。
+ *
  */
 @Public
 public interface InputFormat<OT, T extends InputSplit> extends InputSplitSource<T>, Serializable {
@@ -108,6 +118,10 @@ public interface InputFormat<OT, T extends InputSplit> extends InputSplitSource<
      *
      * @param split The split to be opened.
      * @throws IOException Thrown, if the spit could not be opened due to an I/O problem.
+     * 打开输入格式的并行实例以处理拆分。
+     * 当调用此方法时，它保证已配置的输入格式。
+     * 参数: split -要打开的裂口。
+     * 抛出: IOException -如果由于I/O问题而无法打开唾液，则抛出。
      */
     void open(T split) throws IOException;
 
@@ -129,6 +143,10 @@ public interface InputFormat<OT, T extends InputSplit> extends InputSplitSource<
      * @param reuse Object that may be reused.
      * @return Read record.
      * @throws IOException Thrown, if an I/O error occurred.
+     * 从输入中读取下一条记录。 当调用此方法时，它保证打开的输入格式。
+     * 参数: reuse—可重用的对象。
+     * 返回值: 阅读记录。
+     * 抛出: IOException -当I/O发生错误时抛出。
      */
     OT nextRecord(OT reuse) throws IOException;
 

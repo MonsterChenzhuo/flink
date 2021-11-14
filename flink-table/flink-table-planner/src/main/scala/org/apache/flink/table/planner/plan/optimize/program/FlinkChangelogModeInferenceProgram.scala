@@ -36,6 +36,7 @@ import scala.collection.JavaConversions._
 
 /**
  * An optimize program to infer ChangelogMode for every physical node.
+ * 一个优化程序来推断每个物理节点的ChangelogMode。
  */
 class FlinkChangelogModeInferenceProgram extends FlinkOptimizeProgram[StreamOptimizeContext] {
 
@@ -384,6 +385,8 @@ class FlinkChangelogModeInferenceProgram extends FlinkOptimizeProgram[StreamOpti
           .mkString(" and ")
         // creates a new node based on the new children, to have a more correct node description
         // e.g. description of GroupAggregate is based on the ModifyKindSetTrait of children
+        //创建一个基于新的子节点的新节点，以获得更正确的节点描述，
+        // 例如，GroupAggregate的描述是基于子节点的ModifyKindSetTrait
         val tempNode = node.copy(node.getTraitSet, children).asInstanceOf[StreamPhysicalRel]
         val nodeString = tempNode.getRelDetailedDescription
         throw new TableException(

@@ -41,6 +41,16 @@ import org.apache.flink.api.common.functions.AbstractRichFunction;
  * </ul>
  *
  * @param <OUT> The type of the records produced by this source.
+ * 实现并行数据源的基类，该数据源可以访问上下文信息(通过{@link getRuntimeContext()})
+ * 和其他生命周期方法({@link open(org.apache.flink.configuration.Configuration)}和{@link close()}。
+ * <p>这个类在实现并行源时很有用，因为不同的并行子任务需要执行不同的工作。
+ * 典型的模式是:<ul> <li>使用{@link getRuntimeContext()}来获取运行时上下文。
+ * <li>使用{@link org.apache.flink.api.common.functions.RuntimeContextgetNumberOfParallelSubtasks()}来确定当前的并行度。
+ * 强烈建议使用此方法，而不是硬连接并行性，因为配置的并行性可能会根据程序配置而改变。
+ * 在恢复失败后，当可用的并行工作人员少于所需时，并行性也可能发生变化。
+ * <li>使用{@link org.apache.flink.api.common.functions.RuntimeContextgetIndexOfThisSubtask()}来确定函数的当前实例执行哪个子任务。
+ * <ul> @param <OUT>此源产生的记录的类型。
+ *
  */
 @Public
 public abstract class RichSourceFunction<OUT> extends AbstractRichFunction

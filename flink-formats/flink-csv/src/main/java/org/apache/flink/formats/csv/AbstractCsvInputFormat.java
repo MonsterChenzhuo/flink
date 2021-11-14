@@ -36,6 +36,7 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 /**
  * Input format that reads csv. This abstract class is responsible for cutting the boundary of
  * InputSplit.
+ * 读取csv的输入格式。这个抽象类负责截断InputSplit的边界。
  */
 public abstract class AbstractCsvInputFormat<T> extends FileInputFormat<T> {
 

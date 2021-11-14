@@ -28,6 +28,7 @@ import org.apache.flink.streaming.api.operators.StreamOperatorParameters;
 import org.apache.flink.streaming.api.operators.YieldingOperatorFactory;
 
 /** {@link ContinuousFileReaderOperator} factory. */
+/** 连续读取文件的工厂 */
 public class ContinuousFileReaderOperatorFactory<OUT, T extends TimestampedInputSplit>
         extends AbstractStreamOperatorFactory<OUT>
         implements YieldingOperatorFactory<OUT>, OneInputStreamOperatorFactory<T, OUT> {

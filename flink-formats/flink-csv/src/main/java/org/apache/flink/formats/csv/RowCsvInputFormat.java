@@ -51,6 +51,14 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  * comment char. The comment char is "#". 2.New csv not support configure multi chars field
  * delimiter. 3.New csv not support read first N, it will throw exception. 4.Only support configure
  * line delimiter: "\r" or "\n" or "\r\n".
+ * 将csv读取到Row的输入格式。
+ * org.apache.flink.api.java.io.RowCsvInputFormat:
+ *  1。当行太短时，新的csv将发出这一行(填充空剩余字段)。但是旧的csv会跳过这个太短的行。
+ *  2.新的csv，转义字符将被删除。但是旧的csv将保留转义字符。
+ *  这些可以在新的csv输入格式中不断改进:新的csv不支持配置注释字符。注释字符是“#”。
+ *  2.新的csv不支持配置多字符字段分隔符。
+ *  3.新的csv不支持先读N，它将抛出异常。
+ *  4.只支持配置行分隔符:"\r"或"\n"或"\r\n"。
  */
 public class RowCsvInputFormat extends AbstractCsvInputFormat<Row> {
 
@@ -62,6 +70,7 @@ public class RowCsvInputFormat extends AbstractCsvInputFormat<Row> {
     private final boolean ignoreParseErrors;
 
     /** Runtime instance that performs the actual work. */
+    /** 执行实际工作的运行时实例。*/
     private transient RuntimeConverter runtimeConverter;
 
     private transient MappingIterator<JsonNode> iterator;
@@ -157,6 +166,7 @@ public class RowCsvInputFormat extends AbstractCsvInputFormat<Row> {
         /**
          * Creates a row CSV input format for the given {@link TypeInformation} and file paths with
          * optional parameters.
+         * 使用可选参数为给定的TypeInformation和文件路径创建行CSV输入格式。
          */
         private Builder(TypeInformation<Row> typeInfo, Path... filePaths) {
             checkNotNull(filePaths, "File paths must not be null.");

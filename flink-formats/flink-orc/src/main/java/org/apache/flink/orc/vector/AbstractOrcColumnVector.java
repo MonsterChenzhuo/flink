@@ -44,6 +44,7 @@ import java.time.LocalDate;
 import static org.apache.flink.table.runtime.functions.SqlDateTimeUtils.dateToInternal;
 
 /** This column vector is used to adapt hive's ColumnVector to Flink's ColumnVector. */
+/** 这个列向量用于调整hive的ColumnVector到Flink */
 public abstract class AbstractOrcColumnVector
         implements org.apache.flink.table.data.vector.ColumnVector {
 
@@ -95,6 +96,7 @@ public abstract class AbstractOrcColumnVector
     /**
      * Create a orc vector from partition spec value. See hive {@code
      * VectorizedRowBatchCtx#addPartitionColsToBatch}.
+     * 从分区规格值创建一个orc向量。看到Hive的VectorizedRowBatchCtx#addPartitionColsToBatch。
      */
     private static ColumnVector createHiveVectorFromConstant(
             LogicalType type, Object value, int batchSize) {

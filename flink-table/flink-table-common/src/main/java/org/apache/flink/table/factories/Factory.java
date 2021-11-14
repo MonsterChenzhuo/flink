@@ -75,6 +75,8 @@ public interface Factory {
      * <p>For consistency, an identifier should be declared as one lower case word (e.g. {@code
      * kafka}). If multiple factories exist for different versions, a version should be appended
      * using "-" (e.g. {@code elasticsearch-7}).
+     * 返回相同工厂接口之间的唯一标识符。 为了一致性，标识符应该声明为一个小写单词(例如kafka)。
+     * 如果存在多个不同版本的工厂，则应该使用"-"附加一个版本(例如elasticsearch-7)。
      */
     String factoryIdentifier();
 
@@ -83,6 +85,7 @@ public interface Factory {
      * addition to {@link #optionalOptions()}.
      *
      * <p>See the documentation of {@link Factory} for more information.
+     * 返回一组ConfigOption，除了optionalOptions()，该工厂的实现还需要ConfigOption。
      */
     Set<ConfigOption<?>> requiredOptions();
 
@@ -91,6 +94,7 @@ public interface Factory {
      * addition to {@link #requiredOptions()}.
      *
      * <p>See the documentation of {@link Factory} for more information.
+     * 返回一组ConfigOption，除了requiredOptions()，该工厂的实现还使用它。 有关更多信息，请参阅Factory的文档
      */
     Set<ConfigOption<?>> optionalOptions();
 }

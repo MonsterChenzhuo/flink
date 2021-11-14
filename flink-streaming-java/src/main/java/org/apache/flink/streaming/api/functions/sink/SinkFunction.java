@@ -48,6 +48,10 @@ public interface SinkFunction<IN> extends Function, Serializable {
      * @param context Additional context about the input record.
      * @throws Exception This method may throw exceptions. Throwing an exception will cause the
      *     operation to fail and may trigger recovery.
+     * 将给定值写入接收器。每个记录都会调用这个函数。
+     * 在实现SinkFunction时必须重写此方法，这是一种默认方法，仅用于向后兼容旧式方法。
+     * 参数: value—输入记录。 context—关于输入记录的附加上下文。
+     * 抛出: Exception—此方法可能抛出异常。抛出异常将导致操作失败，并可能触发恢复。
      */
     default void invoke(IN value, Context context) throws Exception {
         invoke(value);

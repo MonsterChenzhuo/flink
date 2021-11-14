@@ -26,6 +26,7 @@ import org.apache.flink.table.types.logical.ArrayType;
 import org.apache.hadoop.hive.ql.exec.vector.ListColumnVector;
 
 /** This column vector is used to adapt hive's ListColumnVector to Flink's ArrayColumnVector. */
+/** 这个列向量用于调整hive的ListColumnVector到Flink的ArrayColumnVector。*/
 public class OrcArrayColumnVector extends AbstractOrcColumnVector
         implements org.apache.flink.table.data.vector.ArrayColumnVector {
 
