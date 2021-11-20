@@ -58,6 +58,16 @@ import java.io.Serializable;
  * <p>Depending on the optionally declared abilities such as {@link SupportsProjectionPushDown} or
  * {@link SupportsFilterPushDown}, the planner might apply changes to an instance and thus mutates
  * the produced runtime implementation.
+ * 来自外部存储系统的动态表的源。 动态表是Flink的Table & SQL API的核心概念，用于以统一的方式处理有界和无界数据。
+ * 根据定义，动态表可以随时间变化。
+ * 当读取一个动态表时，内容可以被认为是: 一种变更记录(有限的或无限的)，它的所有变更都被连续地消耗，直到耗尽该变更记录。
+ * 更多信息请参见ScanTableSource。
+ * 一个不断变化的或非常大的外部表，它的内容通常不会被完全读取，而是在必要时查询单个值。
+ * 有关更多信息，请参阅LookupTableSource。
+ * 注意:两个接口可以同时实现。计划器根据指定的查询决定它们的使用。
+ * 可以将上述接口的实例视为工厂，它们最终生成具体的运行时实现来读取实际数据。
+ * 根据可选声明的功能(如SupportsProjectionPushDown或SupportsFilterPushDown)，规划器可能会将更改应用到实例，从而改变生成的运行时实现。
+ *
  */
 @PublicEvolving
 public interface DynamicTableSource {
@@ -65,10 +75,12 @@ public interface DynamicTableSource {
     /**
      * Creates a copy of this instance during planning. The copy should be a deep copy of all
      * mutable members.
+     * 在规划期间创建此实例的副本。副本应该是所有可变成员的深层副本。
      */
     DynamicTableSource copy();
 
     /** Returns a string that summarizes this source for printing to a console or log. */
+    /** 返回一个字符串，该字符串汇总此源以便打印到控制台或日志。*/
     String asSummaryString();
 
     // --------------------------------------------------------------------------------------------

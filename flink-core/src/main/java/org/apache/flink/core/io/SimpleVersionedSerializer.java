@@ -45,6 +45,9 @@ import java.io.IOException;
  * }</pre>
  *
  * @param <E> The data type serialized / deserialized by this serializer.
+ *
+ * 用于版本化序列化的简单序列化器接口。 序列化器有一个版本(由getVersion()返回)，可以附加到序列化的数据。
+ * 当序列化器发展时，可以使用版本来标识数据被序列化的前一个版本。
  */
 @Internal
 public interface SimpleVersionedSerializer<E> extends Versioned {
@@ -53,6 +56,7 @@ public interface SimpleVersionedSerializer<E> extends Versioned {
      * Gets the version with which this serializer serializes.
      *
      * @return The version of the serialization schema.
+     * 获取此序列化程序要序列化的版本。
      */
     @Override
     int getVersion();
@@ -64,6 +68,10 @@ public interface SimpleVersionedSerializer<E> extends Versioned {
      * @param obj The object to serialize.
      * @return The serialized data (bytes).
      * @throws IOException Thrown, if the serialization fails.
+     * 序列化给定的对象。
+     * 序列化被假定与当前序列化版本(由getVersion()返回)对应。
+     * 参数: obj—要序列化的对象。
+     * 返回值: 序列化的数据(字节)。 抛出: 如果序列化失败，抛出IOException。
      */
     byte[] serialize(E obj) throws IOException;
 
@@ -75,6 +83,10 @@ public interface SimpleVersionedSerializer<E> extends Versioned {
      * @param serialized The serialized data
      * @return The deserialized object
      * @throws IOException Thrown, if the deserialization fails.
+     * 反序列化指定版本的方案序列化的给定数据(字节)。
+     * 参数: version—数据被序列化的版本 serialized—已序列化的数据
+     * 返回值: 反序列化对象
+     * 抛出: IOException——反序列化失败时抛出。
      */
     E deserialize(int version, byte[] serialized) throws IOException;
 }

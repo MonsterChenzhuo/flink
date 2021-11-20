@@ -124,6 +124,7 @@ public interface RowData {
 
     /**
      * Returns the number of fields in this row.
+     * 返回该行中的字段数。
      *
      * <p>The number does not include {@link RowKind}. It is kept separately.
      */

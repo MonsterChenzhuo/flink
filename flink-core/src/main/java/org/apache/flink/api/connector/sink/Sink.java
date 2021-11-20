@@ -101,8 +101,10 @@ public interface Sink<InputT, CommT, WriterStateT, GlobalCommT> extends Serializ
      * #createWriter(InitContext, List)} on recovery.
      *
      * @return the serializer of the writer's state type.
-     */
-    Optional<SimpleVersionedSerializer<WriterStateT>> getWriterStateSerializer();
+     *
+     * 任何有状态接收器都需要提供这个状态序列化器并正确地实现SinkWriter.snapshotState(long)。
+     * 在createWriter(Sink.)中使用各自的状态。InitContext, List)。
+     */Optional<SimpleVersionedSerializer<WriterStateT>> getWriterStateSerializer();
 
     /**
      * Creates a {@link Committer} which is part of a 2-phase-commit protocol. The {@link
@@ -113,6 +115,8 @@ public interface Sink<InputT, CommT, WriterStateT, GlobalCommT> extends Serializ
      *
      * @return A committer for the 2-phase-commit protocol.
      * @throws IOException for any failure during creation.
+     * 创建一个Committer，它是两阶段提交协议的一部分。在第一阶段，SinkWriter通过SinkWriter#preparecommit (boolean)创建committables。
+     * 然后将提交表传递给该提交者，并使用committer#commit(List)持久化。如果返回提交者，接收器也必须返回getCommittableSerializer()。
      */
     Optional<Committer<CommT>> createCommitter() throws IOException;
 
@@ -132,6 +136,7 @@ public interface Sink<InputT, CommT, WriterStateT, GlobalCommT> extends Serializ
     /**
      * Returns the serializer of the committable type. The serializer is required iff the sink has a
      * {@link Committer} or {@link GlobalCommitter}.
+     * 返回可提交类型的序列化器。如果接收器有Committer或GlobalCommitter，则需要序列化器。
      */
     Optional<SimpleVersionedSerializer<CommT>> getCommittableSerializer();
 

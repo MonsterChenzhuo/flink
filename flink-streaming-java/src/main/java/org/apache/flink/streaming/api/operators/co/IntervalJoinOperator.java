@@ -86,7 +86,7 @@ import java.util.Objects;
 @Internal
 public class IntervalJoinOperator<K, T1, T2, OUT>
         extends AbstractUdfStreamOperator<OUT, ProcessJoinFunction<T1, T2, OUT>>
-        implements TwoInputStreamOperator<T1, T2, OUT>, Triggerable<K, String> {
+        implements TwoInputStreamOperator<T1, T2, OUT>, Triggerable<K, String> {  // TwoInputStreamOperator  -->connect
 
     private static final long serialVersionUID = -5380774605111543454L;
 
@@ -226,11 +226,11 @@ public class IntervalJoinOperator<K, T1, T2, OUT>
                     "Long.MIN_VALUE timestamp: Elements used in "
                             + "interval stream joins need to have timestamps meaningful timestamps.");
         }
-
+        //判断数据是否延迟
         if (isLate(ourTimestamp)) {
             return;
         }
-
+        //添加到对应状态中
         addToBuffer(ourBuffer, ourValue, ourTimestamp);
 
         for (Map.Entry<Long, List<BufferEntry<OTHER>>> bucket : otherBuffer.entries()) {
@@ -240,7 +240,7 @@ public class IntervalJoinOperator<K, T1, T2, OUT>
                     || timestamp > ourTimestamp + relativeUpperBound) {
                 continue;
             }
-
+            //组合输出  -->Row
             for (BufferEntry<OTHER> entry : bucket.getValue()) {
                 if (isLeft) {
                     collect((T1) ourValue, (T2) entry.element, ourTimestamp, timestamp);

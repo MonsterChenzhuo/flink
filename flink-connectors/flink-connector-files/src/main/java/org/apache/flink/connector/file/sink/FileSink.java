@@ -211,6 +211,7 @@ public class FileSink<IN> implements Sink<IN, FileSinkCommittable, FileWriterBuc
     }
 
     /** A builder for configuring the sink for row-wise encoding formats. */
+    /** 用于为按行编码格式配置接收器的构建器。 */
     public static class RowFormatBuilder<IN, T extends RowFormatBuilder<IN, T>>
             extends BucketsBuilder<IN, T> {
 

@@ -60,13 +60,22 @@ import java.io.Serializable;
  *
  * <p>In the last step, the planner will call {@link #getScanRuntimeProvider(ScanContext)} for
  * obtaining a provider of runtime implementation.
+ * 一个DynamicTableSource，在运行时扫描来自外部存储系统的所有行。
+ * 扫描的行不必只包含插入，还可以包含更新和删除。
+ * 因此，可以使用表源来读取(有限或无限)更改日志。
+ * 给定的ChangelogMode表示规划器在运行时可以预期的更改集。
+ * 对于常规的批处理场景，源可以发出仅插入行的有界流。
+ * 对于常规流场景，源可以发出无限制的仅插入行的流。
+ * 对于更改数据捕获(CDC)场景，源可以发出带有插入、更新和删除行的有界或无界流。
+ * 也看到RowKind。 ScanTableSource可以实现以下能力，可能在规划过程中改变实例: SupportsWatermarkPushDown SupportsSourceWatermark SupportsFilterPushDown SupportsAggregatePushDown SupportsProjectionPushDown SupportsPartitionPushDown SupportsReadingMetadata
+ * 在最后一步中，规划器将调用getScanRuntimeProvider(ScanTableSource.ScanContext)来获取运行时实现的提供者。
  */
 @PublicEvolving
 public interface ScanTableSource extends DynamicTableSource {
 
     /**
      * Returns the set of changes that the planner can expect during runtime.
-     *
+     * 返回计划程序在运行时可预期的更改集。
      * @see RowKind
      */
     ChangelogMode getChangelogMode();
@@ -90,6 +99,15 @@ public interface ScanTableSource extends DynamicTableSource {
      * backwards compatibility.
      *
      * @see SourceProvider
+     * 返回用于读取数据的运行时实现的提供程序。 可能存在不同的运行时实现接口，这就是为什么ScanTableSource。
+     * ScanRuntimeProvider作为基本接口。
+     * 混凝土ScanTableSource。ScanRuntimeProvider接口可能位于其他Flink模块中。
+     * 独立于提供程序接口，表运行时期望源实现发出内部数据结构(更多信息请参阅org.apache.flink.table.data.RowData)。
+     * 给定的ScanTableSource。
+     * ScanContext通过规划器提供实用程序，用于创建运行时实现，并将对内部数据结构的依赖降到最低。
+     * SourceProvider是推荐的核心接口。flink-table-api-java-bridge中的SourceFunctionProvider和InputFormatProvider是向后兼容的。
+     *
+     *
      */
     ScanRuntimeProvider getScanRuntimeProvider(ScanContext runtimeProviderContext);
 

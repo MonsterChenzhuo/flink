@@ -31,6 +31,7 @@ import java.util.Map;
  * A {@link Format} for a {@link DynamicTableSource} for reading rows.
  *
  * @param <I> runtime interface needed by the table source
+ * DynamicTableSource读取行的格式
  */
 @PublicEvolving
 public interface DecodingFormat<I> extends Format {

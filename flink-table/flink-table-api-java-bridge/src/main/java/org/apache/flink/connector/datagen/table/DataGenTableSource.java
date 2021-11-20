@@ -57,7 +57,7 @@ public class DataGenTableSource implements ScanTableSource {
         this.rowsPerSecond = rowsPerSecond;
         this.numberOfRows = numberOfRows;
     }
-
+    //TODO 核心逻辑
     @Override
     public ScanRuntimeProvider getScanRuntimeProvider(ScanContext context) {
         boolean isBounded = numberOfRows != null;
@@ -77,7 +77,7 @@ public class DataGenTableSource implements ScanTableSource {
         return new DataGenTableSource(
                 fieldGenerators, tableName, schema, rowsPerSecond, numberOfRows);
     }
-
+    // 摘要字符串
     @Override
     public String asSummaryString() {
         return "DataGenTableSource";

@@ -39,7 +39,10 @@ import static org.apache.flink.table.factories.FactoryUtil.CONNECTOR;
 
 /**
  * Factory for creating configured instances of {@link DataGenTableSource} in a stream environment.
+ *
+ * 用于在流环境中创建DataGenTableSource的配置实例的工厂。
  */
+
 @Internal
 public class DataGenTableSourceFactory implements DynamicTableSourceFactory {
 

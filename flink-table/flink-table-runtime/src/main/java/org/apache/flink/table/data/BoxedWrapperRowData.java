@@ -35,6 +35,7 @@ import java.util.Arrays;
  * An implementation of {@link RowData} which also is also backed by an array of Java {@link
  * Object}, just similar to {@link GenericRowData}. But {@link BoxedWrapperRowData} wraps primitive
  * types into boxed object to avoid boxing and unboxing.
+ * RowData的实现也由Java对象的数组支持，类似于GenericRowData。但是BoxedWrapperRowData将基本类型包装到装箱对象中，以避免装箱和解装箱
  */
 public class BoxedWrapperRowData implements RowData, TypedSetters {
 
